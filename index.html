@@ -1450,7 +1450,10 @@ function bindLockUI() {
 // ---------- 启动 ----------
 function init() {
   loadAll();
-  if (!Schema.settings.onboarded || !Schema.reviews.length) seedSample();
+  // 仅“首次运行（本地存储完全没有任何 wb_pm_ 数据）”才预置示例，
+  // 避免“复盘为空 / 未 onboarded”就误把用户真实数据重置成示例数据
+  const firstRun = !Object.keys(localStorage).some(k => k.startsWith(KEY));
+  if (firstRun) seedSample();
   bindHeaderActions();
   bindModuleActions();
   bindLockUI();
