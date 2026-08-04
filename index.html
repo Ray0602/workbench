@@ -202,6 +202,7 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .review-item .section .body { white-space: pre-wrap; word-break: break-word; padding-left: 18px; position: relative; }
 .review-item .section .body::before { content:''; position: absolute; left: 4px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
 .review-item .section.problem .body::before { background: var(--danger); }
+.review-item .section.risk .body::before { background: var(--warn); }
 .review-item .section.achievement .body::before { background: var(--success); }
 .review-item .tags { display:flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .review-item .tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #f3f4f6; color: var(--muted); cursor: pointer; }
@@ -572,8 +573,8 @@ function saveAll() { Object.keys(Schema).forEach(save); scheduleAutoBackup(); }
 function seedSample() {
   const today = todayStr();
   Schema.reviews = [
-    { id: uid(), date: daysAgo(2), done: '完成试产 DVT-2 试装方案评审，与硬件确认 BOM。\n整理上周遗留的 3 条客户反馈，关闭 2 条。', problem: '评审时发现 2 颗物料交期对不上，需临时替换方案。', achievement: '拿到了客户对新一代产品的预订单意向。', tags: ['试产', 'BOM', '客户'] },
-    { id: uid(), date: daysAgo(1), done: '跟进试产线日产量，记录瓶颈工位 3 处。\n与采购对齐长周期物料备货策略。', problem: '昨日未完成：周复盘模板还没写完。', achievement: '瓶颈工位识别到位，本周可推动工艺优化。', tags: ['试产', '工艺', '采购'] }
+    { id: uid(), date: daysAgo(2), done: '完成试产 DVT-2 试装方案评审，与硬件确认 BOM。\n整理上周遗留的 3 条客户反馈，关闭 2 条。', problem: '评审时发现 2 颗物料交期对不上，需临时替换方案。', risk: 'BOM 中尚有 1 颗长周期物料未锁定供应商，可能影响 DVT-3 节奏。', achievement: '拿到了客户对新一代产品的预订单意向。', tags: ['试产', 'BOM', '客户'] },
+    { id: uid(), date: daysAgo(1), done: '跟进试产线日产量，记录瓶颈工位 3 处。\n与采购对齐长周期物料备货策略。', problem: '昨日未完成：周复盘模板还没写完。', risk: '瓶颈工位改造需协调设备停机窗口，存在排期冲突风险。', achievement: '瓶颈工位识别到位，本周可推动工艺优化。', tags: ['试产', '工艺', '采购'] }
     // 注意：今天留空，让首屏"今日复盘还没写"自然浮现
   ];
   Schema.notes = [
@@ -626,12 +627,12 @@ function renderToday() {
   const todayReview = Schema.reviews.find(r => r.date === t);
   if (!todayReview) {
     items.push({ key:'review-today', label: '今日复盘还没写', meta: '已耗时 ~14h', overdue: true, action: '去写', cb: () => switchTab('review') });
-  } else if (!todayReview.done && !todayReview.problem && !todayReview.achievement) {
+  } else if (!todayReview.done && !todayReview.problem && !todayReview.risk && !todayReview.achievement) {
     items.push({ key:'review-today-empty', label: '今日复盘内容为空', meta: '', overdue: false, action: '补充', cb: () => openReviewModal(todayReview.id) });
   }
 
   const yestReview = Schema.reviews.find(r => r.date === daysAgo(1));
-  if (yestReview && !yestReview.done && !yestReview.problem && !yestReview.achievement) {
+  if (yestReview && !yestReview.done && !yestReview.problem && !yestReview.risk && !yestReview.achievement) {
     items.push({ key:'review-yest', label: `昨日 (${daysAgo(1)}) 复盘未完成`, meta: '已自动顺延', overdue: true, action: '补', cb: () => openReviewModal(yestReview.id) });
   }
 
@@ -667,7 +668,7 @@ function renderReview() {
   let list = [...Schema.reviews];
   if (reviewFilter.q) {
     const q = reviewFilter.q.toLowerCase();
-    list = list.filter(r => (r.done + ' ' + r.problem + ' ' + r.achievement + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q));
+    list = list.filter(r => (r.done + ' ' + (r.problem||'') + ' ' + (r.risk||'') + ' ' + r.achievement + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q));
   }
   if (reviewFilter.tag) list = list.filter(r => (r.tags||[]).includes(reviewFilter.tag));
   list.sort((a,b) => b.date.localeCompare(a.date));
@@ -685,7 +686,8 @@ function renderReview() {
           <button class="btn sm danger" data-act="del" data-id="${r.id}">删除</button>
         </div>
         ${r.done ? `<div class="section done"><div class="lbl">${iconCheck()} 今日完成</div><div class="body">${escapeHTML(r.done)}</div></div>` : ''}
-        ${r.problem ? `<div class="section problem"><div class="lbl">${iconWarn()} 问题与风险</div><div class="body">${escapeHTML(r.problem)}</div></div>` : ''}
+        ${r.problem ? `<div class="section problem"><div class="lbl">${iconWarn()} 问题（已发生）</div><div class="body">${escapeHTML(r.problem)}</div></div>` : ''}
+        ${r.risk ? `<div class="section risk"><div class="lbl">${iconWarn()} 风险（潜在）</div><div class="body">${escapeHTML(r.risk)}</div></div>` : ''}
         ${r.achievement ? `<div class="section achievement"><div class="lbl">${iconStar()} 成果亮点</div><div class="body">${escapeHTML(r.achievement)}</div></div>` : ''}
         ${(r.tags||[]).length ? `<div class="tags">${(r.tags||[]).map(t => `<span class="tag" data-tag="${escapeHTML(t)}">#${escapeHTML(t)}</span>`).join('')}</div>` : ''}
       </div>
@@ -712,11 +714,12 @@ function renderReview() {
 
 function openReviewModal(id) {
   const isNew = !id;
-  const r = isNew ? { id: uid(), date: todayStr(), done:'', problem:'', achievement:'', tags:[] } : Schema.reviews.find(x => x.id === id) || Schema.reviews[0];
+  const r = isNew ? { id: uid(), date: todayStr(), done:'', problem:'', risk:'', achievement:'', tags:[] } : Schema.reviews.find(x => x.id === id) || Schema.reviews[0];
   showModal(`<h3>${isNew ? '新增' : '编辑'}复盘</h3>
     <div class="form-row"><label>日期</label><input type="date" id="rf-date" value="${escapeHTML(r.date)}" /></div>
-    <div class="form-row"><label>今日完成事项</label><textarea id="rf-done" placeholder="今天做了什么？每行一条便于阅读">${escapeHTML(r.done)}</textarea></div>
-    <div class="form-row"><label>问题与风险</label><textarea id="rf-problem" placeholder="遇到了什么困难？需要谁/资源跟进？">${escapeHTML(r.problem)}</textarea></div>
+    <div class="form-row"><label>今日完成事项（今日三件事）</label><textarea id="rf-done" rows="5" placeholder="每行一件，建议至少写 3 件">${escapeHTML(r.done || '\n\n\n')}</textarea><p class="hint">建议每天写「今日三件事」，让复盘有抓手。</p></div>
+    <div class="form-row"><label>问题（已发生）</label><textarea id="rf-problem" placeholder="今天遇到了什么困难？需要谁 / 资源跟进？">${escapeHTML(r.problem)}</textarea></div>
+    <div class="form-row"><label>风险（潜在）</label><textarea id="rf-risk" placeholder="未来可能出问题的点？提前如何预防？">${escapeHTML(r.risk || '')}</textarea></div>
     <div class="form-row"><label>成果亮点</label><textarea id="rf-achievement" placeholder="今天值得记一笔的事">${escapeHTML(r.achievement)}</textarea></div>
     <div class="form-row"><label>标签（按 Enter 添加）</label>
       <div class="tag-input" id="rf-tags">${(r.tags||[]).map(t => `<span class="pill">${escapeHTML(t)}<button data-rm="${escapeHTML(t)}">×</button></span>`).join('')}<input id="rf-tag-input" placeholder="输入标签后回车" /></div>
@@ -752,6 +755,7 @@ function openReviewModal(id) {
           date: root.querySelector('#rf-date').value || todayStr(),
           done: root.querySelector('#rf-done').value.trim(),
           problem: root.querySelector('#rf-problem').value.trim(),
+          risk: root.querySelector('#rf-risk').value.trim(),
           achievement: root.querySelector('#rf-achievement').value.trim(),
           tags: Array.from(root.querySelectorAll('.pill')).map(p => p.firstChild.textContent)
         };
@@ -781,6 +785,7 @@ function exportReviewAsResume(rangeFrom, rangeTo) {
     md += `### ${r.date}\n`;
     if (r.done) md += `**完成**：\n${r.done.split('\n').map(l=>'- '+l).join('\n')}\n\n`;
     if (r.problem) md += `**问题**：\n${r.problem}\n\n`;
+    if (r.risk) md += `**风险**：\n${r.risk}\n\n`;
     if (r.achievement) md += `**成果**：\n${r.achievement}\n\n`;
     if (r.tags?.length) md += `标签：${r.tags.map(t=>'`'+t+'`').join(' ')}\n\n`;
   });
@@ -800,6 +805,7 @@ function generateWeeklyReport() {
   const doneCount = week.reduce((s,r)=>s + (r.done ? r.done.split('\n').filter(Boolean).length : 0), 0);
   const achCount = week.filter(r=>r.achievement).length;
   const probCount = week.filter(r=>r.problem).length;
+  const riskCount = week.filter(r=>r.risk).length;
   const tagMap = {};
   week.forEach(r => (r.tags||[]).forEach(t => { tagMap[t] = (tagMap[t]||0)+1; }));
   const topTags = Object.entries(tagMap).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([t])=>'`'+t+'`').join(' ');
@@ -809,13 +815,15 @@ function generateWeeklyReport() {
   md += `## 一、本周概览\n\n`;
   md += `- 完成事项：约 ${doneCount} 项\n`;
   md += `- 取得成果：${achCount} 天有亮点\n`;
-  md += `- 遇到问题：${probCount} 天有风险记录\n`;
+  md += `- 遇到问题（已发生）：${probCount} 天\n`;
+  md += `- 潜在风险：${riskCount} 天\n`;
   md += `- 高频标签：${topTags || '—'}\n\n`;
   md += `## 二、每日明细\n\n`;
   week.forEach(r => {
     md += `### ${r.date}\n`;
     if (r.done) md += `**完成**：\n${r.done.split('\n').filter(Boolean).map(l=>'- '+l).join('\n')}\n`;
-    if (r.problem) md += `\n**问题/风险**：${r.problem}\n`;
+    if (r.problem) md += `\n**问题**：\n${r.problem}\n`;
+    if (r.risk) md += `\n**风险**：\n${r.risk}\n`;
     if (r.achievement) md += `\n**成果**：${r.achievement}\n`;
     if (r.tags?.length) md += `\n标签：${r.tags.map(t=>'`'+t+'`').join(' ')}\n`;
     md += '\n';
@@ -825,6 +833,11 @@ function generateWeeklyReport() {
   showModal(`<h3>本周周报预览</h3>
     <p class="hint">已自动汇总 ${week.length} 天复盘，可复制或下载 Markdown。</p>
     <textarea class="report-area" id="weekly-md">${escapeHTML(md)}</textarea>
+    <div class="form-row" style="margin-top:12px">
+      <label>本周提炼（必填）</label>
+      <textarea id="weekly-distill" class="report-area" style="min-height:90px" placeholder="用一两句话提炼本周最关键的进展、卡点与下一步重心——这是复盘真正的价值所在。"></textarea>
+      <p class="hint">未填写「本周提炼」不能复制 / 下载。</p>
+    </div>
     <div class="actions">
       <button class="btn ghost" data-act="cancel">关闭</button>
       <button class="btn" data-act="copy">复制</button>
@@ -833,13 +846,22 @@ function generateWeeklyReport() {
   `, {
     onMount: (root) => {
       root.querySelector('[data-act="cancel"]').onclick = closeModal;
-      root.querySelector('[data-act="copy"]').onclick = () => {
-        const ta = root.querySelector('#weekly-md');
-        ta.select();
-        try { document.execCommand('copy'); toast('已复制'); }
-        catch { if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(()=>toast('已复制')); }
+      const buildFinal = () => {
+        const distill = root.querySelector('#weekly-distill').value.trim();
+        if (!distill) { toast('请先填写「本周提炼」再复制 / 下载', 'warn'); return null; }
+        return md + `\n## 四、本周提炼\n\n${distill}\n`;
       };
-      root.querySelector('[data-act="download"]').onclick = () => { downloadFile(`周报-${from}_${to}.md`, md, 'text/markdown'); toast('已下载'); };
+      root.querySelector('[data-act="copy"]').onclick = () => {
+        const finalMd = buildFinal(); if (!finalMd) return;
+        const ta = root.querySelector('#weekly-md');
+        ta.value = finalMd; ta.select();
+        try { document.execCommand('copy'); toast('已复制（含本周提炼）'); }
+        catch { if (navigator.clipboard) navigator.clipboard.writeText(finalMd).then(()=>toast('已复制')); }
+      };
+      root.querySelector('[data-act="download"]').onclick = () => {
+        const finalMd = buildFinal(); if (!finalMd) return;
+        downloadFile(`周报-${from}_${to}.md`, finalMd, 'text/markdown'); toast('已下载（含本周提炼）');
+      };
     }
   });
 }
