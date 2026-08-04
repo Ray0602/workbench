@@ -1,7 +1,7 @@
 {
   "name": "小台 · 个人效率工作台",
   "short_name": "工作台",
-  "description": "项目复盘 + 工资理财 + 健身打卡 + 资讯速览，一站本地化",
+  "description": "工作复盘、轻记录、书单与资讯速览，本地存储的离线个人效率工作台",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
