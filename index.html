@@ -256,6 +256,10 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .ds-table th, .ds-table td { border: 1px solid var(--border); padding: 7px 8px; text-align: left; vertical-align: top; }
 .ds-table th { background: var(--bg); color: var(--muted); font-weight: 600; }
 .ds-table td b { color: var(--text); }
+.ab-box { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin: 12px 0; background: var(--bg); }
+.ab-title { font-weight: 600; margin-bottom: 4px; }
+.ab-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 8px; }
+.ab-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
 
 /* 备份提示 */
@@ -562,7 +566,7 @@ function loadAll() {
   });
 }
 function save(key) { store.set(key, Schema[key]); }
-function saveAll() { Object.keys(Schema).forEach(save); }
+function saveAll() { Object.keys(Schema).forEach(save); scheduleAutoBackup(); }
 
 // ---------- 示例数据 ----------
 function seedSample() {
@@ -1164,15 +1168,155 @@ function showDataSecurity() {
       <table class="ds-table"><thead><tr><th>方案</th><th>优点</th><th>代价</th><th>收费</th></tr></thead><tbody>${cloudRows}</tbody></table>
       <p><b>换设备如何找回数据？</b><br/>• <b>手动（推荐隐私做法）</b>：旧设备点「导出」→ 把 JSON 用 AirDrop / 邮件 / 私盘传给新设备 → 新设备点「导入」选该文件（可选「覆盖」干净恢复）。<br/>• 若以后启用云端：新设备安装好后登录你的云端项目，点「下载同步」即可拉回全部数据。<br/>• <b>重要</b>：换设备 / 重装浏览器前，务必先「导出」一次。</p>
       <p class="hint">建议：数据积累到 30 条后，顶部会提示导出备份；定期导出一份到私人位置即可。</p>
+      ${autoBackupSectionHTML()}
     </div>
     <div class="actions"><button class="btn primary" data-act="ok">知道了</button></div>
-  `, { onMount: (root) => { root.querySelector('[data-act="ok"]').onclick = closeModal; } });
+  `, { onMount: (root) => { root.querySelector('[data-act="ok"]').onclick = closeModal; mountAutoBackup(root); } });
+}
+
+// ---------- 本地文件夹自动备份（File System Access API） ----------
+// 仅桌面版 Chrome / Edge 支持；纯本地写文件，零网络、零账号，最隐私的备份方式。
+const FSA_SUPPORTED = ('showDirectoryPicker' in window);
+let autoBackupOn = false;
+let autoBackupDirName = '';
+let _backupTimer = null;
+
+function _fsaDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('wb_pm_fsa', 1);
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains('handles')) r.result.createObjectStore('handles'); };
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => res(r.result);
+  });
+}
+async function _fsaSaveHandle(h) {
+  const db = await _fsaDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('handles', 'readwrite');
+    tx.objectStore('handles').put(h, 'backupDir');
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+async function _fsaLoadHandle() {
+  const db = await _fsaDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('handles', 'readonly');
+    const req = tx.objectStore('handles').get('backupDir');
+    req.onsuccess = () => res(req.result || null);
+    tx.onerror = () => rej(tx.error);
+  });
+}
+async function _fsaVerifyPermission(handle, writable = true) {
+  const opts = writable ? { writable: true } : {};
+  try {
+    if ((await handle.queryPermission(opts)) === 'granted') return true;
+    if ((await handle.requestPermission(opts)) === 'granted') return true;
+  } catch (e) { /* 无手势时 requestPermission 可能抛错，忽略 */ }
+  return false;
+}
+async function _fsaWrite(handle, filename, content) {
+  if (!(await _fsaVerifyPermission(handle, true))) return false;
+  const fh = await handle.getFileHandle(filename, { create: true });
+  const w = await fh.createWritable();
+  await w.write(content);
+  await w.close();
+  return true;
+}
+function backupPayload() {
+  return { app: 'xiaotai-workbench', version: 1, exportedAt: new Date().toISOString(), data: Schema };
+}
+function backupPayloadString() { return JSON.stringify(backupPayload(), null, 2); }
+async function writeAutoBackupFile(content) {
+  const handle = await _fsaLoadHandle();
+  if (!handle) return false;
+  return _fsaWrite(handle, 'workbench-backup-latest.json', content);
+}
+function scheduleAutoBackup() {
+  if (!autoBackupOn || !FSA_SUPPORTED) return;
+  clearTimeout(_backupTimer);
+  _backupTimer = setTimeout(async () => {
+    try {
+      const ok = await writeAutoBackupFile(backupPayloadString());
+      if (!ok) {
+        autoBackupOn = false;
+        localStorage.setItem('wb_pm_autobackup', '0');
+        toast('本地文件夹备份权限失效，已暂停。请在「安全」里重新绑定。', 'warn');
+        updateAutoBackupUI();
+      }
+    } catch (e) { console.warn('auto backup failed', e); }
+  }, 1000);
+}
+async function enableAutoBackup() {
+  if (!FSA_SUPPORTED) { toast('当前浏览器不支持：请用桌面版 Chrome / Edge', 'warn'); return; }
+  try {
+    const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    await _fsaSaveHandle(handle);
+    autoBackupOn = true;
+    autoBackupDirName = handle.name;
+    localStorage.setItem('wb_pm_autobackup', '1');
+    const ok = await writeAutoBackupFile(backupPayloadString());
+    toast(ok ? `已绑定文件夹「${handle.name}」，自动备份开启` : '已绑定，但首次写入失败（权限？）', ok ? 'ok' : 'warn');
+    updateAutoBackupUI();
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // 用户取消选择
+    toast('绑定失败：' + (e && e.message || e), 'danger');
+  }
+}
+function disableAutoBackup() {
+  autoBackupOn = false;
+  localStorage.setItem('wb_pm_autobackup', '0');
+  updateAutoBackupUI();
+  toast('已暂停本地自动备份');
+}
+function manualBackupNow() {
+  if (!FSA_SUPPORTED) { toast('当前浏览器不支持：请用桌面版 Chrome / Edge', 'warn'); return; }
+  (async () => {
+    const handle = await _fsaLoadHandle();
+    if (!handle) { await enableAutoBackup(); return; }
+    const ok = await _fsaWrite(handle, `workbench-backup-${todayStr()}.json`, backupPayloadString());
+    if (ok) toast('已手动备份一份到文件夹');
+    else toast('写入失败，请重新绑定文件夹', 'warn');
+  })();
+}
+function updateAutoBackupUI() {
+  if (document.querySelector('.modal-mask .modal')) showDataSecurity();
+}
+function mountAutoBackup(root) {
+  const en = root.querySelector('#ab-btn-enable');
+  if (en) en.onclick = enableAutoBackup;
+  const dis = root.querySelector('#ab-btn-disable');
+  if (dis) dis.onclick = disableAutoBackup;
+  const now = root.querySelector('#ab-btn-now');
+  if (now) now.onclick = manualBackupNow;
+  const reb = root.querySelector('#ab-btn-rebind');
+  if (reb) reb.onclick = enableAutoBackup; // 重新选文件夹即更换绑定
+}
+function autoBackupSectionHTML() {
+  if (!FSA_SUPPORTED) {
+    return `<div class="ab-box">
+      <div class="ab-title">本地文件夹自动备份</div>
+      <p class="hint">当前浏览器不支持此功能（File System Access API 仅桌面版 Chrome / Edge 可用，Safari / Firefox / 手机浏览器不支持）。你仍可用顶部「导出」按钮手动备份。</p>
+    </div>`;
+  }
+  const on = autoBackupOn;
+  return `<div class="ab-box">
+    <div class="ab-title">本地文件夹自动备份</div>
+    <p class="hint">每次数据改动后，自动把最新数据写成 <code>workbench-backup-latest.json</code> 到指定文件夹（纯本地、零网络、零账号，最隐私的备份方式）。</p>
+    <div class="ab-row">
+      <span id="ab-status">${on ? `已开启 · 文件夹：<b>${escapeHTML(autoBackupDirName)}</b>` : '未开启'}</span>
+      <div class="ab-actions">
+        ${on
+          ? `<button class="btn sm" id="ab-btn-now">立即备份一次</button><button class="btn sm" id="ab-btn-rebind">更换文件夹</button><button class="btn sm danger" id="ab-btn-disable">暂停</button>`
+          : `<button class="btn sm primary" id="ab-btn-enable">选择备份文件夹</button>`}
+      </div>
+    </div>
+  </div>`;
 }
 
 // ---------- 备份与恢复 ----------
 function exportAll() {
-  const payload = { app: 'xiaotai-workbench', version: 1, exportedAt: new Date().toISOString(), data: Schema };
-  downloadFile(`workbench-backup-${todayStr()}.json`, JSON.stringify(payload, null, 2), 'application/json');
+  downloadFile(`workbench-backup-${todayStr()}.json`, backupPayloadString(), 'application/json');
   toast('备份已导出');
 }
 
@@ -1269,6 +1413,9 @@ function clearAll() {
       root.querySelector('[data-act="cancel"]').onclick = closeModal;
       root.querySelector('[data-act="save"]').onclick = () => {
         if (root.querySelector('#cl-confirm').value.trim() !== 'CLEAR') { toast('确认词不对', 'warn'); return; }
+        // 清空前先下载本机快照兜底（与覆盖导入一致的安全阀）
+        const snap = { app: 'xiaotai-workbench-snapshot', version: 1, exportedAt: new Date().toISOString(), note: '清空前的本机数据快照（可重新导入恢复）', data: JSON.parse(JSON.stringify(Schema)) };
+        downloadFile(`workbench-清空前快照-${todayStr()}.json`, JSON.stringify(snap, null, 2), 'application/json');
         store.clearAll();
         Object.assign(Schema, {
           reviews: [], notes: [],
@@ -1490,6 +1637,14 @@ function init() {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW 注册失败', err));
     });
+  }
+
+  // 初始化本地自动备份状态（不阻塞渲染）：若此前已开启且目录句柄仍在，则恢复
+  if (FSA_SUPPORTED && localStorage.getItem('wb_pm_autobackup') === '1') {
+    _fsaLoadHandle().then(h => {
+      if (h) { autoBackupOn = true; autoBackupDirName = h.name; }
+      else { localStorage.setItem('wb_pm_autobackup', '0'); }
+    }).catch(() => { localStorage.setItem('wb_pm_autobackup', '0'); });
   }
 }
 document.addEventListener('DOMContentLoaded', init);
