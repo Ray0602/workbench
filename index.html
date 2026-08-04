@@ -1183,7 +1183,7 @@ function importAll() {
       <label>导入方式</label>
       <div style="display:flex;flex-direction:column;gap:8px;font-size:14px">
         <label><input type="radio" name="imp-mode" value="merge" checked /> 合并：保留本机数据，仅用备份覆盖相同 ID（推荐）</label>
-        <label><input type="radio" name="imp-mode" value="overwrite" /> 覆盖：先清空本机全部数据，再用备份完全替换（不可恢复）</label>
+        <label><input type="radio" name="imp-mode" value="overwrite" /> 覆盖：先自动下载本机快照兜底，再清空本机全部数据、用备份完全替换（不可恢复）</label>
       </div>
     </div>
     <div class="form-row">
@@ -1222,14 +1222,35 @@ function importAll() {
           if (cur && typeof cur === 'object' && inc && typeof inc === 'object') return { ...cur, ...inc };
           return inc;
         };
-        let count = 0;
-        Object.keys(Schema).forEach(k => {
-          if (incoming[k] === undefined) return;
-          Schema[k] = (mode === 'overwrite') ? incoming[k] : merge(Schema[k], incoming[k]);
-          count++;
-        });
-        saveAll(); closeModal(); renderAll();
-        toast(mode === 'overwrite' ? `已覆盖恢复 ${count} 个数据集` : `已合并 ${count} 个数据集`);
+        const apply = () => {
+          let count = 0;
+          Object.keys(Schema).forEach(k => {
+            if (incoming[k] === undefined) return;
+            Schema[k] = (mode === 'overwrite') ? incoming[k] : merge(Schema[k], incoming[k]);
+            count++;
+          });
+          saveAll(); closeModal(); renderAll();
+          toast(mode === 'overwrite' ? `已覆盖恢复 ${count} 个数据集` : `已合并 ${count} 个数据集`);
+        };
+        if (mode === 'overwrite') {
+          // 覆盖前先自动下载本机快照到下载目录，作为防误操作的兜底
+          const snap = { app: 'xiaotai-workbench-snapshot', version: 1, exportedAt: new Date().toISOString(), note: '覆盖导入前的本机数据快照（可重新导入恢复）', data: JSON.parse(JSON.stringify(Schema)) };
+          downloadFile(`workbench-本机快照-${todayStr()}.json`, JSON.stringify(snap, null, 2), 'application/json');
+          showModal(`<h3>⚠️ 确认覆盖本机数据</h3>
+            <p class="hint">已自动下载一份「本机快照」到你的下载目录（覆盖前的全部数据），可随时重新导入恢复。</p>
+            <p style="color:var(--danger);font-size:13px">覆盖将清空本机现有全部数据，用备份完全替换。本机独有、而备份中没有的数据将永久丢失。</p>
+            <div class="actions">
+              <button class="btn ghost" data-act="cancel">取消</button>
+              <button class="btn danger" data-act="ok">确认覆盖</button>
+            </div>`, {
+            onMount: (r2) => {
+              r2.querySelector('[data-act="cancel"]').onclick = closeModal;
+              r2.querySelector('[data-act="ok"]').onclick = () => { apply(); };
+            }
+          });
+          return;
+        }
+        apply();
       };
     }
   });
