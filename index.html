@@ -252,6 +252,10 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .row.between { justify-content: space-between; }
 .spacer { flex: 1; }
 .hint { color: var(--subtle); font-size: 12px; }
+.ds-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 12.5px; }
+.ds-table th, .ds-table td { border: 1px solid var(--border); padding: 7px 8px; text-align: left; vertical-align: top; }
+.ds-table th { background: var(--bg); color: var(--muted); font-weight: 600; }
+.ds-table td b { color: var(--text); }
 hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
 
 /* 备份提示 */
@@ -1141,6 +1145,30 @@ function openNewsImport() {
   });
 }
 
+// ---------- 数据与安全说明（步骤5/6：存储方式·云端方案·收费·换设备找回） ----------
+function iconShield() { return svg('<path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/>'); }
+
+function showDataSecurity() {
+  const cloudRows = [
+    ['① 手动导出 / 导入（当前默认）', '零账号、零服务器，数据永不离开本机', '换设备需记得导出导入；两端可能不一致', '免费'],
+    ['② Supabase（可选，需自建项目）', 'Serverless 数据库，数据在你自己的项目里', '需注册账号、配置 RLS；传输经网络', 'Free：DB 500MB / 存储 1GB / 2 项目'],
+    ['③ Firebase（可选）', 'Google 托管，实时同步方便', '数据在 Google 服务器；需账号', 'Spark 免费：存储 1GB / 日下载 10GB'],
+    ['④ 自建后端（可选）', '完全自控，最强可定制', '要自己维护服务器，成本与门槛最高', '视服务器而定']
+  ].map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+
+  showModal(`<h3>数据存放与隐私说明</h3>
+    <div style="font-size:14px;line-height:1.7">
+      <p><b>当前数据存在哪里？</b><br/>全部在你本机浏览器的 <code>localStorage</code>（键名前缀 <code>wb_pm_</code>），<b>按设备隔离、不上传任何服务器</b>。GitHub Pages 只托管网页文件，读不到你的数据。</p>
+      <p><b>隐私边界（务必知道）</b><br/>• 纯静态站：陌生人拿到链接也只能看到空壳 + 示例数据。<br/>• 本地口令锁是「防误开 / 防 casual 窥探」<b>不是加密</b>——拿到你设备的人仍可经开发者工具读取 localStorage。<br/>• 导出的 JSON 备份是明文，<b>别传到公开网盘</b>。</p>
+      <p><b>要不要接云端同步？</b><br/>接云端 = 用「一点隐私」换「多端实时一致」。你以隐私为优先，<b>推荐保持①手动模式</b>。云端方案（②③④）当前未启用，需要时可单独加「默认关闭、你自己填凭据才生效」的可选模块。</p>
+      <table class="ds-table"><thead><tr><th>方案</th><th>优点</th><th>代价</th><th>收费</th></tr></thead><tbody>${cloudRows}</tbody></table>
+      <p><b>换设备如何找回数据？</b><br/>• <b>手动（推荐隐私做法）</b>：旧设备点「导出」→ 把 JSON 用 AirDrop / 邮件 / 私盘传给新设备 → 新设备点「导入」选该文件（可选「覆盖」干净恢复）。<br/>• 若以后启用云端：新设备安装好后登录你的云端项目，点「下载同步」即可拉回全部数据。<br/>• <b>重要</b>：换设备 / 重装浏览器前，务必先「导出」一次。</p>
+      <p class="hint">建议：数据积累到 30 条后，顶部会提示导出备份；定期导出一份到私人位置即可。</p>
+    </div>
+    <div class="actions"><button class="btn primary" data-act="ok">知道了</button></div>
+  `, { onMount: (root) => { root.querySelector('[data-act="ok"]').onclick = closeModal; } });
+}
+
 // ---------- 备份与恢复 ----------
 function exportAll() {
   const payload = { app: 'xiaotai-workbench', version: 1, exportedAt: new Date().toISOString(), data: Schema };
@@ -1150,7 +1178,14 @@ function exportAll() {
 
 function importAll() {
   showModal(`<h3>导入备份恢复数据</h3>
-    <p class="hint">选择此前导出的 JSON 备份文件，或直接粘贴内容。<br/>⚠️ 导入会<strong>合并</strong>已有数据（同 ID 覆盖）。</p>
+    <p class="hint">选择此前导出的 JSON 备份文件，或直接粘贴内容。</p>
+    <div class="form-row">
+      <label>导入方式</label>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:14px">
+        <label><input type="radio" name="imp-mode" value="merge" checked /> 合并：保留本机数据，仅用备份覆盖相同 ID（推荐）</label>
+        <label><input type="radio" name="imp-mode" value="overwrite" /> 覆盖：先清空本机全部数据，再用备份完全替换（不可恢复）</label>
+      </div>
+    </div>
     <div class="form-row">
       <label>选择 JSON 备份</label>
       <input type="file" id="imp-file" accept=".json,application/json" />
@@ -1177,6 +1212,7 @@ function importAll() {
         if (!txt) { toast('请提供 JSON 内容', 'warn'); return; }
         let data; try { data = JSON.parse(txt); } catch (err) { toast('JSON 解析失败：' + err.message, 'danger'); return; }
         const incoming = data.data || data;
+        const mode = (root.querySelector('input[name="imp-mode"]:checked') || {}).value || 'merge';
         const merge = (cur, inc) => {
           if (Array.isArray(cur) && Array.isArray(inc)) {
             const map = new Map(cur.map(x => [x.id || JSON.stringify(x), x]));
@@ -1188,10 +1224,12 @@ function importAll() {
         };
         let count = 0;
         Object.keys(Schema).forEach(k => {
-          if (incoming[k] !== undefined) { Schema[k] = merge(Schema[k], incoming[k]); count++; }
+          if (incoming[k] === undefined) return;
+          Schema[k] = (mode === 'overwrite') ? incoming[k] : merge(Schema[k], incoming[k]);
+          count++;
         });
         saveAll(); closeModal(); renderAll();
-        toast(`已合并 ${count} 个数据集`);
+        toast(mode === 'overwrite' ? `已覆盖恢复 ${count} 个数据集` : `已合并 ${count} 个数据集`);
       };
     }
   });
@@ -1289,11 +1327,13 @@ function bindHeaderActions() {
     <button class="btn sm" id="btn-lock" title="锁定 / 启用手令锁">${iconLock()}<span class="long-text">锁</span></button>
     <button class="btn sm" id="btn-export" title="导出全部数据 JSON 备份">${iconDownload()}<span class="long-text">导出</span></button>
     <button class="btn sm" id="btn-import" title="导入 JSON 备份">${iconUpload()}<span class="long-text">导入</span></button>
+    <button class="btn sm" id="btn-data" title="数据存放方式与隐私说明">${iconShield()}<span class="long-text">安全</span></button>
     <button class="btn sm danger" id="btn-clear" title="清空全部数据">${iconTrash()}</button>
   `;
   $('#btn-lock').onclick = () => { if (isLockSet()) lockNow(); else showLock(); };
   $('#btn-export').onclick = exportAll;
   $('#btn-import').onclick = importAll;
+  $('#btn-data').onclick = showDataSecurity;
   $('#btn-clear').onclick = clearAll;
 }
 
