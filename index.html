@@ -1,0 +1,1434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>小台 · 个人效率工作台</title>
+<meta name="theme-color" content="#2563EB" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="小台工作台" />
+<meta name="description" content="工作复盘、轻记录、书单、资讯速览，离线可用的本地化个人效率工作台。" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+
+<style>
+/* ============ 设计 token ============ */
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --muted: #6b7280;
+  --subtle: #9ca3af;
+  --primary: #2563EB;
+  --primary-soft: #DBEAFE;
+  --primary-deep: #1D4ED8;
+  --success: #16a34a;
+  --danger: #e5484d;
+  --warn: #f59e0b;
+  --accent: #facc15;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
+  --shadow: 0 2px 12px rgba(15,23,42,.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --tab-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --header-h: 60px;
+}
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background: var(--bg); color: var(--text); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, sans-serif;
+  font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 12px);
+}
+@media (min-width: 900px) { body { padding-bottom: 24px; } }
+
+/* ============ 顶部 header ============ */
+.app-header {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: var(--header-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+}
+.app-title { display:flex; align-items:center; gap:10px; font-weight: 700; font-size: 17px; }
+.app-title .logo {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--primary);
+  display:grid; place-items: center;
+  flex: 0 0 auto;
+}
+.app-title .logo svg { width: 16px; height: 16px; }
+.app-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ============ 通用 button / input ============ */
+.btn {
+  appearance: none; border: 1px solid var(--border); background: #fff; color: var(--text);
+  height: 36px; padding: 0 12px; border-radius: var(--radius-sm);
+  font-size: 14px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background .15s, border-color .15s, color .15s, transform .05s;
+  white-space: nowrap;
+}
+.btn:hover { background: #f3f4f6; }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn.primary:hover { background: var(--primary-deep); }
+.btn.danger { background: #fff; color: var(--danger); border-color: #fecaca; }
+.btn.danger:hover { background: #fef2f2; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { background: #f3f4f6; color: var(--text); }
+.btn.sm { height: 30px; padding: 0 9px; font-size: 13px; }
+.btn.lg { height: 44px; padding: 0 16px; font-size: 15px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn svg { width: 16px; height: 16px; }
+
+input[type="text"], input[type="number"], input[type="date"], input[type="tel"], textarea, select {
+  width: 100%;
+  font: inherit; color: var(--text);
+  background: #fff; border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm); padding: 9px 11px;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+  min-height: 44px; font-size: 16px; /* 16 防止 iOS 放大 */
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px; }
+
+/* ============ 布局 ============ */
+.container {
+  max-width: 1100px; margin: 0 auto;
+  padding: 16px;
+}
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+.card + .card { margin-top: 12px; }
+.card h2 { margin: 0 0 12px; font-size: 16px; display:flex; align-items:center; gap: 8px; }
+.card h2 .hint { font-size: 12px; color: var(--subtle); font-weight: normal; margin-left: auto; }
+.section-title { font-size: 13px; color: var(--muted); margin: 18px 0 8px; letter-spacing: .03em; }
+
+/* 移动 Tab Bar / PC 顶部 Tab */
+.tabs { display: none; }
+@media (max-width: 899px) {
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: rgba(255,255,255,.96); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    height: calc(var(--tab-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+  }
+  .tabbar button {
+    appearance: none; background: transparent; border: 0; color: var(--muted);
+    display:flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; font-size: 11px; cursor: pointer; padding: 4px 0;
+  }
+  .tabbar button.active { color: var(--primary); }
+  .tabbar button svg { width: 22px; height: 22px; }
+  .tabbar button .badge {
+    position: absolute; transform: translate(10px,-6px);
+    background: var(--danger); color: #fff; border-radius: 999px;
+    font-size: 10px; line-height: 1; padding: 2px 5px; min-width: 16px;
+  }
+  .tabbar button { position: relative; }
+}
+@media (min-width: 900px) {
+  .tabs {
+    display: flex; gap: 4px; padding: 0 16px; max-width: 1100px; margin: 0 auto;
+    border-bottom: 1px solid var(--border); background: rgba(255,255,255,.7);
+    overflow-x: auto;
+  }
+  .tabs button {
+    appearance: none; background: transparent; border: 0;
+    padding: 12px 14px; cursor: pointer; color: var(--muted); font-size: 14px;
+    border-bottom: 2px solid transparent;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .tabs button svg { width: 16px; height: 16px; }
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* 网格 */
+.grid { display: grid; gap: 12px; }
+@media (min-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* 今天要处理 */
+.today {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.today h2 { margin: 0 0 8px; font-size: 15px; display:flex; align-items:center; gap: 8px; }
+.today h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+.today ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.today li { display:flex; align-items: center; gap: 10px; padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+.today li .label { flex: 1; min-width: 0; }
+.today li .meta { color: var(--subtle); font-size: 12px; flex-shrink: 0; }
+.today li.overdue { border-color: #fecaca; background: #fef2f2; }
+.today li.overdue .label::before { content: '逾期 '; color: var(--danger); font-weight: 600; }
+.today li .btn { flex-shrink: 0; }
+
+/* 复盘台 */
+.review-item {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; background: #fff; margin-bottom: 10px;
+}
+.review-item .head { display:flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.review-item .date { font-weight: 600; font-size: 15px; }
+.review-item .day-tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--primary-soft); color: var(--primary-deep); }
+.review-item .section { margin: 6px 0; }
+.review-item .section .lbl { font-size: 12px; color: var(--muted); margin-bottom: 4px; display:flex; align-items:center; gap: 4px; }
+.review-item .section .lbl svg { width: 14px; height: 14px; }
+.review-item .section .body { white-space: pre-wrap; word-break: break-word; padding-left: 18px; position: relative; }
+.review-item .section .body::before { content:''; position: absolute; left: 4px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+.review-item .section.problem .body::before { background: var(--danger); }
+.review-item .section.achievement .body::before { background: var(--success); }
+.review-item .tags { display:flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.review-item .tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #f3f4f6; color: var(--muted); cursor: pointer; }
+.review-item .tag:hover { background: #e5e7eb; }
+.review-item .actions { display:flex; gap: 6px; margin-top: 10px; justify-content: flex-end; }
+
+/* 轻记录 */
+.note-item {
+  display: flex; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border);
+}
+.note-item:last-child { border-bottom: 0; }
+.note-item .t { color: var(--subtle); font-size: 12px; flex-shrink: 0; min-width: 56px; padding-top: 2px; }
+.note-item .c { flex: 1; word-break: break-word; }
+.note-item .x { color: var(--subtle); cursor: pointer; padding: 4px; align-self: flex-start; }
+.note-item .x:hover { color: var(--danger); }
+
+
+/* 书单 */
+.book-item { display:flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.book-item:last-child { border-bottom: 0; }
+.book-item .cover {
+  width: 48px; height: 64px; border-radius: 6px; flex-shrink: 0;
+  display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px;
+  text-align: center; padding: 4px; line-height: 1.1;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+.book-item .info { flex: 1; min-width: 0; }
+.book-item .info .t { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.book-item .info .a { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.book-item .info .p { display:flex; gap: 8px; align-items: center; }
+.book-item .info .p .bar { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
+.book-item .info .p .bar > span { display: block; height: 100%; background: var(--primary); }
+.book-item .info .p .pt { font-size: 12px; color: var(--muted); }
+
+/* 资讯 */
+.news-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.news-item:last-child { border-bottom: 0; }
+.news-item .head { display:flex; align-items:center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.news-item .cat { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--primary-soft); color: var(--primary-deep); }
+.news-item .src { font-size: 12px; color: var(--subtle); }
+.news-item .ts { font-size: 12px; color: var(--subtle); margin-left: auto; }
+.news-item .ttl { font-weight: 600; margin: 4px 0; font-size: 14px; }
+.news-item .sm { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* 通用辅助 */
+.empty { text-align: center; color: var(--subtle); padding: 28px 16px; font-size: 14px; }
+.row { display:flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.row.between { justify-content: space-between; }
+.spacer { flex: 1; }
+.hint { color: var(--subtle); font-size: 12px; }
+hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
+
+/* 备份提示 */
+.backup-banner {
+  display:flex; align-items: center; gap: 8px;
+  background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+  border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px;
+}
+.backup-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* modal */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(15,23,42,.45);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; padding: 16px;
+}
+.modal-mask.show { display: flex; }
+.modal {
+  background: #fff; border-radius: var(--radius);
+  width: 100%; max-width: 560px; max-height: 90vh; overflow: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,.18);
+  padding: 18px;
+}
+.modal h3 { margin: 0 0 12px; font-size: 16px; }
+.modal .form-row { margin-bottom: 10px; }
+.modal .actions { display:flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
+/* 标签输入 */
+.tag-input { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: #fff; min-height: 44px; align-items: center; }
+.tag-input input { border: 0; padding: 4px 6px; flex: 1; min-width: 80px; min-height: 28px; background: transparent; font-size: 14px; }
+.tag-input input:focus { box-shadow: none; }
+.tag-input .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--primary-soft); color: var(--primary-deep); border-radius: 999px; font-size: 13px; }
+.tag-input .pill button { appearance: none; border: 0; background: transparent; color: var(--primary-deep); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+
+/* svg chart */
+svg.chart { display:block; max-width: 100%; }
+.axis text { font-size: 10px; fill: var(--muted); }
+.axis line { stroke: var(--border); }
+
+/* 工具条 */
+.toolbar { display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.toolbar .spacer { flex: 1; }
+.toolbar input, .toolbar select { width: auto; min-width: 0; }
+.toolbar .search { flex: 1; min-width: 160px; }
+
+/* 小屏适配 */
+@media (max-width: 599px) {
+  .container { padding: 12px; }
+  .card { padding: 14px; }
+  .app-header { padding: 0 12px; }
+  .app-title { font-size: 16px; }
+  .app-actions .btn { height: 32px; padding: 0 9px; font-size: 13px; }
+  .app-actions .btn.long-text { display: none; }
+}
+
+/* 资讯信源卡 */
+.src-cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:10px; }
+.src-card {
+  display:flex; flex-direction:column; gap:4px;
+  border:1px solid var(--border); border-radius:10px; padding:12px;
+  text-decoration:none; color:var(--text); background:#fff;
+  transition:border-color .15s, transform .05s, box-shadow .15s;
+}
+.src-card:hover { border-color:var(--primary); box-shadow:var(--shadow-sm); }
+.src-card:active { transform:translateY(1px); }
+.src-card .nm { font-weight:600; font-size:14px; display:flex; align-items:center; gap:6px; }
+.src-card .nm svg { width:16px; height:16px; color:var(--primary); flex-shrink:0; }
+.src-card .ds { font-size:12px; color:var(--muted); }
+
+/* AI 讨论 */
+.ai-settings { background:#f9fafb; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:10px; }
+.ai-settings .hint { margin-top:4px; display:block; }
+.ai-settings .grid-3 { gap:8px; }
+.ai-msgs { max-height:340px; overflow:auto; display:flex; flex-direction:column; gap:8px; padding:8px 0; }
+.ai-msg { padding:9px 12px; border-radius:10px; font-size:14px; line-height:1.55; white-space:pre-wrap; word-break:break-word; }
+.ai-msg.user { background:var(--primary-soft); color:var(--primary-deep); align-self:flex-end; max-width:90%; }
+.ai-msg.assistant { background:#f3f4f6; color:var(--text); align-self:flex-start; max-width:92%; }
+.ai-msg.thinking { color:var(--subtle); font-style:italic; align-self:flex-start; }
+.ai-msg.err { background:#fef2f2; color:var(--danger); align-self:flex-start; }
+.ai-empty { color:var(--subtle); font-size:13px; text-align:center; padding:14px 0; }
+
+/* 周报 */
+.report-area { width:100%; min-height:360px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; line-height:1.6; }
+
+
+/* ============ 本地口令锁 ============ */
+body.locked .app-header, body.locked .tabs, body.locked .container { display: none !important; }
+.lock-screen {
+  position: fixed; inset: 0; z-index: 1000; display: none;
+  align-items: center; justify-content: center; padding: 24px;
+  background: linear-gradient(160deg, #1e3a8a 0%, #2563EB 60%, #3b82f6 100%);
+}
+.lock-screen.show { display: flex; }
+.lock-box {
+  width: 100%; max-width: 360px; background: #fff; border-radius: 18px;
+  padding: 30px 24px 24px; box-shadow: 0 24px 70px rgba(0,0,0,.35); text-align: center;
+}
+.lock-logo {
+  width: 54px; height: 54px; border-radius: 15px; background: var(--primary);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+}
+.lock-box h2 { margin: 4px 0 2px; font-size: 20px; }
+.lock-box .sub { font-size: 12px; color: var(--muted); margin: 0 0 4px; }
+.lock-pane { margin-top: 18px; text-align: left; }
+.lock-pane label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.lock-pane input {
+  width: 100%; padding: 12px 14px; font-size: 16px;
+  border: 1px solid var(--border-strong); border-radius: 10px; margin-bottom: 10px;
+}
+.lock-pane input:focus { outline: 2px solid var(--primary-soft); border-color: var(--primary); }
+.lock-pane .btn.block { width: 100%; margin-top: 4px; }
+.link-btn {
+  background: none; border: none; color: var(--primary); font-size: 13px;
+  cursor: pointer; margin-top: 14px; width: 100%; text-align: center; padding: 6px;
+}
+.link-btn.danger { color: var(--danger); }
+.lock-err { color: var(--danger); font-size: 13px; min-height: 18px; margin-bottom: 6px; }
+
+</style>
+</head>
+<body>
+<!-- ============ 本地口令锁 ============ -->
+<div id="lock-screen" class="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+    <h2>小台工作台</h2>
+    <p class="sub">本地口令锁 · 数据仅存你的浏览器，不上传服务器</p>
+
+    <div id="lock-set" class="lock-pane">
+      <label>设置访问口令（4–32 位）</label>
+      <input type="password" id="lock-pass1" placeholder="设一道口令" autocomplete="new-password" />
+      <input type="password" id="lock-pass2" placeholder="再输一次确认" autocomplete="new-password" />
+      <button class="btn primary block" id="lock-set-btn">启用口令锁</button>
+      <button class="link-btn" id="lock-skip">暂不设置，直接进</button>
+    </div>
+
+    <div id="lock-enter" class="lock-pane" style="display:none">
+      <label>输入口令解锁</label>
+      <input type="password" id="lock-pass" placeholder="输入口令" autocomplete="current-password" />
+      <div id="lock-err" class="lock-err"></div>
+      <button class="btn primary block" id="lock-unlock-btn">解锁</button>
+      <button class="link-btn danger" id="lock-forget">忘记口令？清空数据并重设</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 顶部 Header ============ -->
+<header class="app-header">
+  <div class="app-title">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#FACC15"/></svg></div>
+    小台 · 个人效率工作台
+  </div>
+  <div class="app-actions"></div>
+</header>
+
+<!-- ============ PC 顶部 Tab ============ -->
+<nav class="tabs" id="tabs-pc"></nav>
+
+<!-- ============ 主体内容 ============ -->
+<main class="container">
+
+  <!-- 今天要处理 -->
+  <section class="view active" id="view-today">
+    <div class="today">
+      <h2><span class="dot"></span>今天要处理 <span class="hint" style="color:var(--subtle);font-weight:normal;font-size:12px;margin-left:6px">打开就看见，无需推送</span></h2>
+      <ul id="today-list"></ul>
+    </div>
+    <div class="section-title">快速进入</div>
+    <div class="grid grid-3">
+      <button class="card" style="text-align:left;cursor:pointer" onclick="switchTab('review')">
+        <h2>工作复盘</h2>
+        <div class="hint">按日归档今日完成 / 问题 / 成果</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- 复盘 -->
+  <section class="view" id="view-review">
+    <div class="toolbar">
+      <button class="btn primary" id="review-add">+ 新增复盘</button>
+      <input type="text" class="search" id="review-search" placeholder="🔍 搜索关键词 / 标签" />
+      <select id="review-tags" style="min-width:140px"></select>
+      <button class="btn" id="review-export-resume">导出简历素材</button>
+      <button class="btn" id="review-weekly">📝 生成本周周报</button>
+    </div>
+    <div id="review-list"></div>
+  </section>
+
+  <!-- 轻记录 -->
+  <section class="view" id="view-note">
+    <div class="card">
+      <div class="row" style="gap:8px">
+        <input type="text" id="note-text" placeholder="随手记一笔：刚想到的事 / 一闪而过的灵感…" style="flex:1" />
+        <button class="btn primary" id="note-add">记下来</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0">
+      <div id="note-list"></div>
+    </div>
+  </section>
+
+
+  <!-- 书单 -->
+  <section class="view" id="view-library">
+    <div class="toolbar">
+      <button class="btn primary" id="book-add">+ 添加一本书</button>
+    </div>
+    <div class="card"><div id="book-list"></div></div>
+    <div class="card" id="ai-card">
+      <h2>读书 AI 讨论 <span class="hint">填自己的 Key，纯本地调用</span></h2>
+      <div class="ai-settings">
+        <div class="hint" style="margin-bottom:6px">配置一次即可，Key 仅存你本机浏览器，不上传任何服务器。</div>
+        <div class="grid grid-3">
+          <div><label>API Key</label><input type="password" id="ai-key" placeholder="sk-..." autocomplete="off" /></div>
+          <div><label>接口 Base URL</label><input type="text" id="ai-base" placeholder="https://api.deepseek.com/v1" /></div>
+          <div><label>模型</label><input type="text" id="ai-model" placeholder="deepseek-chat" /></div>
+        </div>
+        <div class="hint" style="margin-top:6px">支持 OpenAI / DeepSeek 等 OpenAI 兼容接口。若浏览器提示跨域(CORS)被拦截，可把 Base URL 换成支持 CORS 的代理地址。</div>
+        <div class="row" style="margin-top:8px;justify-content:flex-end">
+          <button class="btn sm primary" id="ai-save-cfg">保存配置</button>
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <label style="margin:0">讨论书目</label>
+        <select id="ai-book" style="flex:1;min-width:0"></select>
+        <button class="btn sm ghost" id="ai-clear-chat">清空对话</button>
+      </div>
+      <div class="ai-msgs" id="ai-msgs"><div class="ai-empty">选一本书，开始和 AI 聊聊书中的观点 💬</div></div>
+      <div class="row" style="margin-top:8px;gap:8px">
+        <textarea id="ai-input" placeholder="输入你想讨论的问题，例如：这本书的核心方法论是什么？" style="flex:1;min-height:44px"></textarea>
+        <button class="btn primary" id="ai-send">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 资讯 -->
+  <section class="view" id="view-news">
+    <div class="toolbar">
+      <button class="btn primary" id="news-import">📥 导入今日速览</button>
+      <button class="btn" id="news-clear">清空</button>
+      <span class="hint" style="margin-left:auto">由 WorkBuddy 每日定时任务自动产出</span>
+    </div>
+    <div class="card">
+      <h2>精选信源 <span class="hint">一键跳转，纯离线</span></h2>
+      <div class="src-cards" id="src-cards"></div>
+    </div>
+    <div class="card">
+      <h2>我的速览手记 <span class="hint">自填，存本地，不联网</span></h2>
+      <textarea id="news-note" placeholder="写下你对今日政经 / 市场的简短判断、趋势观察，或贴一段想记住的摘要…"></textarea>
+      <div class="row" style="margin-top:8px;justify-content:flex-end">
+        <button class="btn primary sm" id="news-note-save">保存手记</button>
+      </div>
+    </div>
+    <div id="news-list"></div>
+  </section>
+</main>
+
+<!-- ============ 移动底部 Tab ============ -->
+<nav class="tabbar" id="tabs-mobile"></nav>
+
+<script>
+/* =========================================================
+ * 小台工作台 - 全部逻辑
+ * 单文件、零外部依赖、localStorage 持久化、JSON 导入导出
+ * ========================================================= */
+'use strict';
+
+// ---------- 工具 ----------
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const fmtDate = (s) => { try { const d = new Date(s); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; } catch { return s; } };
+const monthStr = (d=new Date()) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
+const escapeHTML = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escapeCSV = (s='') => { const t = String(s); return /[",\n]/.test(t) ? `"${t.replace(/"/g,'""')}"` : t; };
+const money = (n) => '¥' + (Number(n) || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+// 持久层：所有 key 加 wb_pm_ 前缀
+const KEY = 'wb_pm_';
+const store = {
+  get(k, def) { try { const v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : def; } catch { return def; } },
+  set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) { console.error('存储失败', e); toast('存储失败：' + e.message, 'danger'); } },
+  rm(k) { localStorage.removeItem(KEY + k); },
+  clearAll() { Object.keys(localStorage).filter(k => k.startsWith(KEY)).forEach(k => localStorage.removeItem(k)); }
+};
+
+// ---------- 数据结构 ----------
+const Schema = {
+  reviews: [],   // {id, date, done, problem, achievement, tags:[]}
+  notes: [],     // {id, ts, content}
+  books: [],     // {id, title, author, total, current, status:'reading'|'done'|'wish', quote, addedAt}
+  news: [],      // {id, date, category, source, title, summary, url, ts}
+  newsNotes: '', // 自填速览手记（纯本地）
+  aiSettings: { key:'', base:'https://api.deepseek.com/v1', model:'deepseek-chat' },
+  settings: { onboarded: false }
+};
+
+function loadAll() {
+  Object.keys(Schema).forEach(k => {
+    const v = store.get(k, null);
+    if (v !== null) Schema[k] = v;
+  });
+}
+function save(key) { store.set(key, Schema[key]); }
+function saveAll() { Object.keys(Schema).forEach(save); }
+
+// ---------- 示例数据 ----------
+function seedSample() {
+  const today = todayStr();
+  Schema.reviews = [
+    { id: uid(), date: daysAgo(2), done: '完成试产 DVT-2 试装方案评审，与硬件确认 BOM。\n整理上周遗留的 3 条客户反馈，关闭 2 条。', problem: '评审时发现 2 颗物料交期对不上，需临时替换方案。', achievement: '拿到了客户对新一代产品的预订单意向。', tags: ['试产', 'BOM', '客户'] },
+    { id: uid(), date: daysAgo(1), done: '跟进试产线日产量，记录瓶颈工位 3 处。\n与采购对齐长周期物料备货策略。', problem: '昨日未完成：周复盘模板还没写完。', achievement: '瓶颈工位识别到位，本周可推动工艺优化。', tags: ['试产', '工艺', '采购'] }
+    // 注意：今天留空，让首屏"今日复盘还没写"自然浮现
+  ];
+  Schema.notes = [
+    { id: uid(), ts: Date.now() - 3600*1000*4, content: '今天的工位 C 良率偏低，记得复盘下。' },
+    { id: uid(), ts: Date.now() - 3600*1000*1.5, content: '看到一个不错的看板模板，回头整理到工作台。' },
+    { id: uid(), ts: Date.now() - 600*1000, content: '晚上去跑步 30 分钟。' }
+  ];
+  Schema.books = [
+    { id: uid(), title: '项目管理之美', author: 'Scott Berkun', total: 220, current: 88, status: 'reading', quote: '"衡量一个项目是否成功，要看它是否解决了最初要解决的问题。"', addedAt: daysAgo(20) },
+    { id: uid(), title: '深度工作', author: 'Cal Newport', total: 280, current: 0, status: 'wish', quote: '', addedAt: daysAgo(5) }
+  ];
+  Schema.settings.onboarded = true;
+  saveAll();
+}
+
+// ---------- Tab 路由 ----------
+const TABS = [
+  { id: 'today',    label: '今天',   icon: iconBell() },
+  { id: 'review',   label: '复盘',   icon: iconBook() },
+  { id: 'note',     label: '轻记录', icon: iconEdit() },
+  { id: 'library',  label: '书单',   icon: iconBook2() },
+  { id: 'news',     label: '资讯',   icon: iconNews() }
+];
+let currentTab = 'today';
+
+function renderTabs() {
+  const pc = $('#tabs-pc'); if (pc) {
+    pc.innerHTML = TABS.map(t => `<button data-tab="${t.id}" class="${t.id===currentTab?'active':''}">${t.icon}<span>${t.label}</span></button>`).join('');
+    pc.onclick = e => { const b = e.target.closest('button[data-tab]'); if (b) switchTab(b.dataset.tab); };
+  }
+  const mb = $('#tabs-mobile'); if (mb) {
+    mb.innerHTML = TABS.map(t => `<button data-tab="${t.id}" class="${t.id===currentTab?'active':''}">${t.icon}<span>${t.label}</span></button>`).join('');
+    mb.onclick = e => { const b = e.target.closest('button[data-tab]'); if (b) switchTab(b.dataset.tab); };
+  }
+}
+function switchTab(id) {
+  currentTab = id;
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
+  renderTabs();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render(id);
+}
+
+// ---------- 今天要处理 ----------
+function renderToday() {
+  const ul = $('#today-list'); if (!ul) return;
+  const items = [];
+  const t = todayStr();
+
+  const todayReview = Schema.reviews.find(r => r.date === t);
+  if (!todayReview) {
+    items.push({ key:'review-today', label: '今日复盘还没写', meta: '已耗时 ~14h', overdue: true, action: '去写', cb: () => switchTab('review') });
+  } else if (!todayReview.done && !todayReview.problem && !todayReview.achievement) {
+    items.push({ key:'review-today-empty', label: '今日复盘内容为空', meta: '', overdue: false, action: '补充', cb: () => openReviewModal(todayReview.id) });
+  }
+
+  const yestReview = Schema.reviews.find(r => r.date === daysAgo(1));
+  if (yestReview && !yestReview.done && !yestReview.problem && !yestReview.achievement) {
+    items.push({ key:'review-yest', label: `昨日 (${daysAgo(1)}) 复盘未完成`, meta: '已自动顺延', overdue: true, action: '补', cb: () => openReviewModal(yestReview.id) });
+  }
+
+
+  const totalItems = Schema.reviews.length + Schema.notes.length + Schema.books.length;
+  if (totalItems >= 30) {
+    items.push({ key:'backup', label: `数据已积累 ${totalItems} 条`, meta: '建议导出备份', overdue: false, action: '导出', cb: exportAll });
+  }
+
+  if (!items.length) {
+    ul.innerHTML = `<li style="border:0;background:transparent;color:var(--success);justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> 当前一切就绪，继续保持 ✨</li>`;
+    return;
+  }
+  ul.innerHTML = items.map(it => `
+    <li class="${it.overdue?'overdue':''}">
+      <span class="label">${escapeHTML(it.label)}</span>
+      <span class="meta">${escapeHTML(it.meta)}</span>
+      <button class="btn sm primary" data-act="${it.key}">${escapeHTML(it.action)}</button>
+    </li>
+  `).join('');
+  ul.onclick = e => {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const it = items.find(x => x.key === btn.dataset.act);
+    if (it) it.cb();
+  };
+}
+
+// ---------- 复盘 ----------
+let reviewFilter = { q: '', tag: '' };
+function renderReview() {
+  const root = $('#review-list'); if (!root) return;
+  let list = [...Schema.reviews];
+  if (reviewFilter.q) {
+    const q = reviewFilter.q.toLowerCase();
+    list = list.filter(r => (r.done + ' ' + r.problem + ' ' + r.achievement + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q));
+  }
+  if (reviewFilter.tag) list = list.filter(r => (r.tags||[]).includes(reviewFilter.tag));
+  list.sort((a,b) => b.date.localeCompare(a.date));
+
+  if (!list.length) {
+    root.innerHTML = `<div class="empty">还没写过复盘，点上方「新增复盘」开始 ✍️</div>`;
+  } else {
+    root.innerHTML = list.map(r => `
+      <div class="review-item">
+        <div class="head">
+          <span class="date">${escapeHTML(r.date)}</span>
+          <span class="day-tag">${r.date === todayStr() ? '今日' : (r.date === daysAgo(1) ? '昨日' : '')}</span>
+          <span class="spacer"></span>
+          <button class="btn sm ghost" data-act="edit" data-id="${r.id}">编辑</button>
+          <button class="btn sm danger" data-act="del" data-id="${r.id}">删除</button>
+        </div>
+        ${r.done ? `<div class="section done"><div class="lbl">${iconCheck()} 今日完成</div><div class="body">${escapeHTML(r.done)}</div></div>` : ''}
+        ${r.problem ? `<div class="section problem"><div class="lbl">${iconWarn()} 问题与风险</div><div class="body">${escapeHTML(r.problem)}</div></div>` : ''}
+        ${r.achievement ? `<div class="section achievement"><div class="lbl">${iconStar()} 成果亮点</div><div class="body">${escapeHTML(r.achievement)}</div></div>` : ''}
+        ${(r.tags||[]).length ? `<div class="tags">${(r.tags||[]).map(t => `<span class="tag" data-tag="${escapeHTML(t)}">#${escapeHTML(t)}</span>`).join('')}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  const allTags = Array.from(new Set(Schema.reviews.flatMap(r => r.tags || [])));
+  $('#review-tags').innerHTML = `<option value="">全部标签 (${allTags.length})</option>` + allTags.map(t => `<option value="${escapeHTML(t)}" ${reviewFilter.tag===t?'selected':''}>#${escapeHTML(t)}</option>`).join('');
+
+  root.onclick = e => {
+    const t = e.target.closest('.tag');
+    if (t) { reviewFilter.tag = t.dataset.tag; renderReview(); return; }
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    if (btn.dataset.act === 'edit') openReviewModal(btn.dataset.id);
+    if (btn.dataset.act === 'del') {
+      if (confirm('删除该复盘？此操作不可恢复。')) {
+        Schema.reviews = Schema.reviews.filter(x => x.id !== btn.dataset.id);
+        save('reviews'); renderAll();
+      }
+    }
+  };
+}
+
+function openReviewModal(id) {
+  const isNew = !id;
+  const r = isNew ? { id: uid(), date: todayStr(), done:'', problem:'', achievement:'', tags:[] } : Schema.reviews.find(x => x.id === id) || Schema.reviews[0];
+  showModal(`<h3>${isNew ? '新增' : '编辑'}复盘</h3>
+    <div class="form-row"><label>日期</label><input type="date" id="rf-date" value="${escapeHTML(r.date)}" /></div>
+    <div class="form-row"><label>今日完成事项</label><textarea id="rf-done" placeholder="今天做了什么？每行一条便于阅读">${escapeHTML(r.done)}</textarea></div>
+    <div class="form-row"><label>问题与风险</label><textarea id="rf-problem" placeholder="遇到了什么困难？需要谁/资源跟进？">${escapeHTML(r.problem)}</textarea></div>
+    <div class="form-row"><label>成果亮点</label><textarea id="rf-achievement" placeholder="今天值得记一笔的事">${escapeHTML(r.achievement)}</textarea></div>
+    <div class="form-row"><label>标签（按 Enter 添加）</label>
+      <div class="tag-input" id="rf-tags">${(r.tags||[]).map(t => `<span class="pill">${escapeHTML(t)}<button data-rm="${escapeHTML(t)}">×</button></span>`).join('')}<input id="rf-tag-input" placeholder="输入标签后回车" /></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn primary" data-act="save">保存</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      const ti = root.querySelector('#rf-tag-input');
+      ti.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          const v = ti.value.trim().replace(/^#/,'');
+          if (!v) return;
+          const cur = Array.from(root.querySelectorAll('.pill')).map(p => p.firstChild.textContent);
+          if (!cur.includes(v)) {
+            const p = document.createElement('span');
+            p.className = 'pill'; p.innerHTML = `${escapeHTML(v)}<button data-rm="${escapeHTML(v)}">×</button>`;
+            ti.parentNode.insertBefore(p, ti);
+          }
+          ti.value = '';
+        }
+      });
+      root.querySelector('#rf-tags').addEventListener('click', e => {
+        const b = e.target.closest('button[data-rm]'); if (b) b.parentNode.remove();
+      });
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="save"]').onclick = () => {
+        const obj = {
+          id: r.id,
+          date: root.querySelector('#rf-date').value || todayStr(),
+          done: root.querySelector('#rf-done').value.trim(),
+          problem: root.querySelector('#rf-problem').value.trim(),
+          achievement: root.querySelector('#rf-achievement').value.trim(),
+          tags: Array.from(root.querySelectorAll('.pill')).map(p => p.firstChild.textContent)
+        };
+        const idx = Schema.reviews.findIndex(x => x.id === obj.id);
+        if (idx >= 0) Schema.reviews[idx] = obj; else Schema.reviews.unshift(obj);
+        save('reviews'); closeModal(); renderAll();
+        toast('已保存');
+      };
+    }
+  });
+}
+
+function exportReviewAsResume(rangeFrom, rangeTo) {
+  const list = Schema.reviews
+    .filter(r => r.date >= rangeFrom && r.date <= rangeTo)
+    .sort((a,b) => a.date.localeCompare(b.date));
+  if (!list.length) { toast('所选时间段没有复盘记录', 'warn'); return; }
+  let md = `# 个人成长记录\n\n时间区间：${rangeFrom} ~ ${rangeTo}\n\n`;
+  const tagMap = {};
+  list.forEach(r => (r.tags||[]).forEach(t => { tagMap[t] = (tagMap[t]||0) + 1; }));
+  const tagStats = Object.entries(tagMap).sort((a,b)=>b[1]-a[1]);
+  if (tagStats.length) {
+    md += `## 标签维度统计\n\n` + tagStats.map(([t,c]) => `- ${t}: ${c} 次`).join('\n') + '\n\n';
+  }
+  md += `## 时间线\n\n`;
+  list.forEach(r => {
+    md += `### ${r.date}\n`;
+    if (r.done) md += `**完成**：\n${r.done.split('\n').map(l=>'- '+l).join('\n')}\n\n`;
+    if (r.problem) md += `**问题**：\n${r.problem}\n\n`;
+    if (r.achievement) md += `**成果**：\n${r.achievement}\n\n`;
+    if (r.tags?.length) md += `标签：${r.tags.map(t=>'`'+t+'`').join(' ')}\n\n`;
+  });
+  downloadFile(`复盘-简历素材-${rangeFrom}_${rangeTo}.md`, md, 'text/markdown');
+  toast('简历素材已导出');
+}
+
+function generateWeeklyReport() {
+  const now = new Date();
+  const dow = now.getDay(); // 0=日 6=六
+  const monday = new Date(now); monday.setDate(now.getDate() - ((dow + 6) % 7));
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  const from = fmtDate(monday), to = fmtDate(sunday);
+  const week = Schema.reviews.filter(r => r.date >= from && r.date <= to).sort((a,b)=>a.date.localeCompare(b.date));
+  if (!week.length) { toast(`本周（${from} ~ ${to}）还没有复盘记录`, 'warn'); return; }
+
+  const doneCount = week.reduce((s,r)=>s + (r.done ? r.done.split('\n').filter(Boolean).length : 0), 0);
+  const achCount = week.filter(r=>r.achievement).length;
+  const probCount = week.filter(r=>r.problem).length;
+  const tagMap = {};
+  week.forEach(r => (r.tags||[]).forEach(t => { tagMap[t] = (tagMap[t]||0)+1; }));
+  const topTags = Object.entries(tagMap).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([t])=>'`'+t+'`').join(' ');
+
+  let md = `# 周报（${from} ~ ${to}）\n\n`;
+  md += `> 自动汇总自「工作复盘」模块，本周共 ${week.length} 天有记录。\n\n`;
+  md += `## 一、本周概览\n\n`;
+  md += `- 完成事项：约 ${doneCount} 项\n`;
+  md += `- 取得成果：${achCount} 天有亮点\n`;
+  md += `- 遇到问题：${probCount} 天有风险记录\n`;
+  md += `- 高频标签：${topTags || '—'}\n\n`;
+  md += `## 二、每日明细\n\n`;
+  week.forEach(r => {
+    md += `### ${r.date}\n`;
+    if (r.done) md += `**完成**：\n${r.done.split('\n').filter(Boolean).map(l=>'- '+l).join('\n')}\n`;
+    if (r.problem) md += `\n**问题/风险**：${r.problem}\n`;
+    if (r.achievement) md += `\n**成果**：${r.achievement}\n`;
+    if (r.tags?.length) md += `\n标签：${r.tags.map(t=>'`'+t+'`').join(' ')}\n`;
+    md += '\n';
+  });
+  md += `## 三、下周计划（待填）\n\n- \n- \n- \n`;
+
+  showModal(`<h3>本周周报预览</h3>
+    <p class="hint">已自动汇总 ${week.length} 天复盘，可复制或下载 Markdown。</p>
+    <textarea class="report-area" id="weekly-md">${escapeHTML(md)}</textarea>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">关闭</button>
+      <button class="btn" data-act="copy">复制</button>
+      <button class="btn primary" data-act="download">下载 .md</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="copy"]').onclick = () => {
+        const ta = root.querySelector('#weekly-md');
+        ta.select();
+        try { document.execCommand('copy'); toast('已复制'); }
+        catch { if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(()=>toast('已复制')); }
+      };
+      root.querySelector('[data-act="download"]').onclick = () => { downloadFile(`周报-${from}_${to}.md`, md, 'text/markdown'); toast('已下载'); };
+    }
+  });
+}
+
+// ---------- 轻记录 ----------
+function renderNotes() {
+  const list = $('#note-list'); if (!list) return;
+  const items = [...Schema.notes].sort((a,b) => b.ts - a.ts);
+  if (!items.length) {
+    list.innerHTML = `<div class="empty">还没有轻记录。在上面写下第一句 ✏️</div>`;
+    return;
+  }
+  list.innerHTML = items.map(n => `
+    <div class="note-item">
+      <div class="t">${fmtHM(new Date(n.ts))}</div>
+      <div class="c">${escapeHTML(n.content)}</div>
+      <div class="x" data-id="${n.id}" title="删除">${iconX()}</div>
+    </div>
+  `).join('');
+  list.onclick = e => {
+    const x = e.target.closest('.x'); if (!x) return;
+    Schema.notes = Schema.notes.filter(n => n.id !== x.dataset.id);
+    save('notes'); renderNotes(); renderToday();
+  };
+}
+
+function fmtHM(d) {
+  if (fmtDate(d) === todayStr()) return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+
+// ---------- 书单 ----------
+function renderLibrary() {
+  const root = $('#book-list'); if (!root) return;
+  const list = [...Schema.books].sort((a,b) => {
+    const order = { reading: 0, wish: 1, done: 2 };
+    return order[a.status] - order[b.status] || (b.addedAt||'').localeCompare(a.addedAt||'');
+  });
+  if (!list.length) { root.innerHTML = '<div class="empty">书架空空的，加一本开始 📚</div>'; return; }
+  root.innerHTML = list.map(b => {
+    const pct = b.total ? Math.min(100, Math.round(b.current / b.total * 100)) : 0;
+    const statusLabel = { reading: '在读', wish: '想读', done: '读完' }[b.status];
+    const coverColor = pickColor(b.title);
+    return `
+      <div class="book-item">
+        <div class="cover" style="background:${coverColor}">${escapeHTML(b.title.slice(0,2))}</div>
+        <div class="info">
+          <div class="t">${escapeHTML(b.title)} <span class="hint" style="font-weight:normal">· ${statusLabel}</span></div>
+          <div class="a">${escapeHTML(b.author || '佚名')}</div>
+          <div class="p">
+            <div class="bar"><span style="width:${pct}%"></span></div>
+            <span class="pt">${b.current||0}/${b.total||'?'} 页 · ${pct}%</span>
+          </div>
+          ${b.quote ? `<div style="margin-top:6px;font-size:12px;color:var(--muted);font-style:italic;border-left:3px solid var(--border);padding-left:8px">${escapeHTML(b.quote)}</div>` : ''}
+          <div class="row" style="margin-top:8px;gap:6px">
+            ${b.status === 'reading' ? `<button class="btn sm" data-act="prog" data-id="${b.id}">+ 进度</button>` : ''}
+            ${b.status === 'wish' ? `<button class="btn sm" data-act="start" data-id="${b.id}">开始读</button>` : ''}
+            ${b.status === 'reading' ? `<button class="btn sm" data-act="done" data-id="${b.id}">标记读完</button>` : ''}
+            ${b.status === 'done' ? `<button class="btn sm" data-act="redo" data-id="${b.id}">重新读</button>` : ''}
+            <button class="btn sm" data-act="quote" data-id="${b.id}">编辑摘录</button>
+            <button class="btn sm danger" data-act="del" data-id="${b.id}">${iconX()}</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  root.onclick = e => {
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    const id = b.dataset.id;
+    const book = Schema.books.find(x => x.id === id);
+    if (!book) return;
+    if (b.dataset.act === 'prog') {
+      const add = Number(prompt(`《${book.title}》当前 ${book.current}/${book.total} 页\n增加多少页？`, '20'));
+      if (add > 0) { book.current = Math.min(book.total, book.current + add); if (book.current >= book.total) book.status='done'; save('books'); renderLibrary(); renderToday(); }
+    }
+    if (b.dataset.act === 'start') { book.status='reading'; book.current = book.current || 1; save('books'); renderLibrary(); renderToday(); }
+    if (b.dataset.act === 'done') { book.status='done'; book.current = book.total; save('books'); renderLibrary(); }
+    if (b.dataset.act === 'redo') { book.status='reading'; save('books'); renderLibrary(); }
+    if (b.dataset.act === 'quote') {
+      const q = prompt('编辑摘录/笔记', book.quote || '');
+      if (q !== null) { book.quote = q; save('books'); renderLibrary(); }
+    }
+    if (b.dataset.act === 'del') {
+      if (confirm('从书单移除这本书？')) { Schema.books = Schema.books.filter(x => x.id !== id); save('books'); renderLibrary(); }
+    }
+  };
+  renderAIPanel();
+}
+
+function pickColor(seed) {
+  const palette = ['#2563EB','#7c3aed','#db2777','#16a34a','#f59e0b','#0ea5e9','#ef4444','#14b8a6'];
+  let h = 0; for (let i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i)) >>> 0;
+  return palette[h % palette.length];
+}
+
+function openBookModal() {
+  showModal(`<h3>添加一本书</h3>
+    <div class="form-row"><label>书名</label><input type="text" id="bk-title" placeholder="如：项目管理之美" /></div>
+    <div class="form-row"><label>作者</label><input type="text" id="bk-author" placeholder="选填" /></div>
+    <div class="form-row"><label>总页数</label><input type="number" id="bk-total" min="1" placeholder="300" /></div>
+    <div class="form-row"><label>状态</label><select id="bk-status"><option value="reading">在读</option><option value="wish">想读</option><option value="done">读完</option></select></div>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn primary" data-act="save">添加</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="save"]').onclick = () => {
+        const title = root.querySelector('#bk-title').value.trim();
+        if (!title) { toast('书名不能为空', 'warn'); return; }
+        Schema.books.unshift({
+          id: uid(), title, author: root.querySelector('#bk-author').value.trim(),
+          total: Number(root.querySelector('#bk-total').value) || 0,
+          current: 0, status: root.querySelector('#bk-status').value,
+          quote: '', addedAt: todayStr()
+        });
+        save('books'); closeModal(); renderLibrary(); renderToday();
+        toast('已加入书单');
+      };
+    }
+  });
+}
+
+// ---------- 书单 AI 讨论 ----------
+let aiBookId = '';
+function renderAIPanel() {
+  const sel = $('#ai-book'); if (!sel) return;
+  $('#ai-key').value = Schema.aiSettings.key || '';
+  $('#ai-base').value = Schema.aiSettings.base || 'https://api.deepseek.com/v1';
+  $('#ai-model').value = Schema.aiSettings.model || 'deepseek-chat';
+
+  const books = Schema.books;
+  const cur = (aiBookId && books.find(b => b.id === aiBookId)) ? aiBookId : (books[0] ? books[0].id : '');
+  aiBookId = cur;
+  sel.innerHTML = books.length
+    ? books.map(b => `<option value="${b.id}">${escapeHTML(b.title)}</option>`).join('')
+    : '<option value="">（书架空空，先加一本书）</option>';
+  sel.value = cur;
+  renderAIMessages();
+}
+
+function renderAIMessages() {
+  const box = $('#ai-msgs'); if (!box) return;
+  const book = Schema.books.find(b => b.id === aiBookId);
+  const chat = (book && book.aiChat) || [];
+  if (!chat.length) { box.innerHTML = '<div class="ai-empty">选一本书，开始和 AI 聊聊书中的观点 💬</div>'; return; }
+  box.innerHTML = chat.map(m => `<div class="ai-msg ${m.role === 'user' ? 'user' : 'assistant'}${m.thinking ? ' thinking' : ''}${String(m.content).startsWith('调用失败') ? ' err' : ''}">${escapeHTML(m.content)}</div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function aiSend() {
+  const book = Schema.books.find(b => b.id === aiBookId);
+  if (!book) { toast('请先选一本书', 'warn'); return; }
+  if (!Schema.aiSettings.key) { toast('请先在上方填写 API Key 并保存', 'warn'); return; }
+  const input = $('#ai-input');
+  const text = (input.value || '').trim();
+  if (!text) return;
+  input.value = '';
+  book.aiChat = book.aiChat || [];
+  book.aiChat.push({ role: 'user', content: text });
+  book.aiChat.push({ role: 'assistant', content: '思考中…', thinking: true });
+  save('books'); renderAIMessages();
+
+  const sys = { role: 'system', content: `你是一个读书讨论助手，正在和用户聊《${book.title}》${book.author ? `（作者：${book.author}）` : ''}这本书。请围绕书中的观点、方法论、人物或情节展开讨论，也可联系现实，但必须基于书中内容。用中文回答，简洁有洞察，不超过 300 字。` };
+  const apiMessages = [sys, ...book.aiChat.filter(m => !m.thinking).map(m => ({ role: m.role, content: m.content }))];
+
+  try {
+    const reply = await aiChat(apiMessages);
+    book.aiChat = book.aiChat.filter(m => !m.thinking);
+    book.aiChat.push({ role: 'assistant', content: reply });
+    save('books'); renderAIMessages();
+  } catch (err) {
+    book.aiChat = book.aiChat.filter(m => !m.thinking);
+    book.aiChat.push({ role: 'assistant', content: '调用失败：' + err.message });
+    save('books'); renderAIMessages();
+  }
+}
+
+async function aiChat(messages) {
+  const cfg = Schema.aiSettings;
+  const base = (cfg.base || 'https://api.deepseek.com/v1').replace(/\/$/, '');
+  const url = base + '/chat/completions';
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key },
+    body: JSON.stringify({ model: cfg.model || 'deepseek-chat', messages, temperature: 0.7, stream: false })
+  });
+  if (!resp.ok) {
+    let detail = '';
+    try { detail = (await resp.json())?.error?.message || ''; } catch {}
+    throw new Error('HTTP ' + resp.status + (detail ? ' · ' + detail : ''));
+  }
+  const data = await resp.json();
+  return (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '(空响应)';
+}
+
+// ---------- 资讯 ----------
+function renderNews() {
+  const root = $('#news-list'); if (!root) return;
+  if (!Schema.news.length) {
+    root.innerHTML = `<div class="empty">还没有资讯速览。点击右上角「导入今日速览」加载由 WorkBuddy 每日自动抓取的政经与基金热点。</div>`;
+    return;
+  }
+  const list = [...Schema.news].sort((a,b) => (b.date+(b.ts||0)).localeCompare(a.date+(a.ts||0)));
+  const byDate = {};
+  list.forEach(n => { (byDate[n.date] = byDate[n.date] || []).push(n); });
+  root.innerHTML = Object.entries(byDate).map(([date, arr]) => `
+    <div class="card">
+      <h2>${date}</h2>
+      ${arr.map(n => `
+        <div class="news-item">
+          <div class="head">
+            <span class="cat">${escapeHTML(n.category || '资讯')}</span>
+            ${n.source ? `<span class="src">${escapeHTML(n.source)}</span>` : ''}
+            ${n.url ? `<a class="src" href="${escapeHTML(n.url)}" target="_blank" rel="noopener">原文 ↗</a>` : ''}
+            <span class="ts">${n.ts ? fmtHM(new Date(n.ts)) : ''}</span>
+          </div>
+          <div class="ttl">${escapeHTML(n.title || '(无标题)')}</div>
+          ${n.summary ? `<p class="sm">${escapeHTML(n.summary)}</p>` : ''}
+          <div class="row" style="margin-top:6px;justify-content:flex-end">
+            <button class="btn sm ghost" data-del="${n.id}">${iconX()}</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  root.onclick = e => {
+    const d = e.target.closest('button[data-del]'); if (!d) return;
+    Schema.news = Schema.news.filter(n => n.id !== d.dataset.del);
+    save('news'); renderNews();
+  };
+}
+
+// 精选信源（纯静态，离线可点）
+const NEWS_SOURCES = [
+  { nm:'新华财经', ds:'权威财经时政', url:'https://www.news.cn/finance.htm' },
+  { nm:'华尔街见闻', ds:'全球市场实时', url:'https://wallstreetcn.com' },
+  { nm:'FT中文网', ds:'国际政经深度', url:'https://www.ftchinese.com' },
+  { nm:'同花顺', ds:'A股行情数据', url:'https://www.10jqka.com.cn' },
+  { nm:'财新网', ds:'财经调查报道', url:'https://www.caixin.com' },
+  { nm:'金十数据', ds:'快讯与日历', url:'https://www.jin10.com' },
+  { nm:'央视财经', ds:'宏观与消费', url:'https://finance.cctv.com' },
+  { nm:'新浪财经', ds:'综合资讯聚合', url:'https://finance.sina.com.cn' }
+];
+
+function renderNewsSources() {
+  const root = $('#src-cards'); if (!root) return;
+  root.innerHTML = NEWS_SOURCES.map(s => `
+    <a class="src-card" href="${escapeHTML(s.url)}" target="_blank" rel="noopener">
+      <span class="nm">${iconLink()}${escapeHTML(s.nm)}</span>
+      <span class="ds">${escapeHTML(s.ds)}</span>
+    </a>
+  `).join('');
+  const note = $('#news-note'); if (note) note.value = Schema.newsNotes || '';
+}
+
+function openNewsImport() {
+  showModal(`<h3>导入今日资讯速览</h3>
+    <p class="hint">把 WorkBuddy 每日自动任务产出的 JSON 文件内容粘贴到这里（或拖入文件）。</p>
+    <div class="form-row">
+      <label>选择 JSON 文件</label>
+      <input type="file" id="news-file" accept=".json,application/json" />
+    </div>
+    <div class="form-row">
+      <label>或直接粘贴 JSON 内容</label>
+      <textarea id="news-json" placeholder='{"date":"2026-08-04","items":[{"category":"政经","source":"路透","title":"...","summary":"..."}]}' style="min-height:140px"></textarea>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn primary" data-act="save">导入</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      root.querySelector('#news-file').onchange = e => {
+        const f = e.target.files[0]; if (!f) return;
+        const reader = new FileReader();
+        reader.onload = ev => { root.querySelector('#news-json').value = ev.target.result; };
+        reader.readAsText(f);
+      };
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="save"]').onclick = () => {
+        const txt = root.querySelector('#news-json').value.trim();
+        if (!txt) { toast('请提供 JSON 内容', 'warn'); return; }
+        let data; try { data = JSON.parse(txt); } catch (err) { toast('JSON 解析失败：' + err.message, 'danger'); return; }
+        const items = data.items || data.news || (Array.isArray(data) ? data : []);
+        const date = data.date || todayStr();
+        const ts = Date.now();
+        let added = 0;
+        items.forEach(n => {
+          Schema.news.unshift({
+            id: uid(),
+            date, ts,
+            category: n.category || n.cat || '资讯',
+            source: n.source || n.src || '',
+            url: n.url || n.link || '',
+            title: n.title || n.headline || '(无标题)',
+            summary: n.summary || n.desc || ''
+          });
+          added++;
+        });
+        if (added) { save('news'); closeModal(); renderNews(); switchTab('news'); toast(`导入 ${added} 条`); }
+        else { toast('未识别到可导入条目', 'warn'); }
+      };
+    }
+  });
+}
+
+// ---------- 备份与恢复 ----------
+function exportAll() {
+  const payload = { app: 'xiaotai-workbench', version: 1, exportedAt: new Date().toISOString(), data: Schema };
+  downloadFile(`workbench-backup-${todayStr()}.json`, JSON.stringify(payload, null, 2), 'application/json');
+  toast('备份已导出');
+}
+
+function importAll() {
+  showModal(`<h3>导入备份恢复数据</h3>
+    <p class="hint">选择此前导出的 JSON 备份文件，或直接粘贴内容。<br/>⚠️ 导入会<strong>合并</strong>已有数据（同 ID 覆盖）。</p>
+    <div class="form-row">
+      <label>选择 JSON 备份</label>
+      <input type="file" id="imp-file" accept=".json,application/json" />
+    </div>
+    <div class="form-row">
+      <label>或粘贴 JSON</label>
+      <textarea id="imp-json" placeholder='{"data": {...}}' style="min-height:140px"></textarea>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn primary" data-act="save">导入</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      root.querySelector('#imp-file').onchange = e => {
+        const f = e.target.files[0]; if (!f) return;
+        const reader = new FileReader();
+        reader.onload = ev => { root.querySelector('#imp-json').value = ev.target.result; };
+        reader.readAsText(f);
+      };
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="save"]').onclick = () => {
+        const txt = root.querySelector('#imp-json').value.trim();
+        if (!txt) { toast('请提供 JSON 内容', 'warn'); return; }
+        let data; try { data = JSON.parse(txt); } catch (err) { toast('JSON 解析失败：' + err.message, 'danger'); return; }
+        const incoming = data.data || data;
+        const merge = (cur, inc) => {
+          if (Array.isArray(cur) && Array.isArray(inc)) {
+            const map = new Map(cur.map(x => [x.id || JSON.stringify(x), x]));
+            inc.forEach(x => map.set(x.id || JSON.stringify(x), x));
+            return Array.from(map.values());
+          }
+          if (cur && typeof cur === 'object' && inc && typeof inc === 'object') return { ...cur, ...inc };
+          return inc;
+        };
+        let count = 0;
+        Object.keys(Schema).forEach(k => {
+          if (incoming[k] !== undefined) { Schema[k] = merge(Schema[k], incoming[k]); count++; }
+        });
+        saveAll(); closeModal(); renderAll();
+        toast(`已合并 ${count} 个数据集`);
+      };
+    }
+  });
+}
+
+function clearAll() {
+  showModal(`<h3>⚠️ 清空全部数据</h3>
+    <p style="color:var(--danger);font-size:13px">这将删除本机所有工作台数据，且不可恢复。建议先「导出 JSON 备份」。</p>
+    <div class="form-row"><label>请输入 <code>CLEAR</code> 确认</label><input type="text" id="cl-confirm" placeholder="CLEAR" /></div>
+    <div class="actions">
+      <button class="btn ghost" data-act="cancel">取消</button>
+      <button class="btn danger" data-act="save">确认清空</button>
+    </div>
+  `, {
+    onMount: (root) => {
+      root.querySelector('[data-act="cancel"]').onclick = closeModal;
+      root.querySelector('[data-act="save"]').onclick = () => {
+        if (root.querySelector('#cl-confirm').value.trim() !== 'CLEAR') { toast('确认词不对', 'warn'); return; }
+        store.clearAll();
+        Object.assign(Schema, {
+          reviews: [], notes: [],
+          books: [], news: [], newsNotes: '',
+          aiSettings: { key:'', base:'https://api.deepseek.com/v1', model:'deepseek-chat' },
+          settings: { onboarded: false }
+        });
+        saveAll(); closeModal(); renderAll();
+        toast('已清空');
+      };
+    }
+  });
+}
+
+function downloadFile(name, content, mime='text/plain') {
+  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+}
+
+// ---------- 模态框 ----------
+function showModal(html, opts={}) {
+  closeModal();
+  const mask = document.createElement('div');
+  mask.className = 'modal-mask show';
+  mask.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(mask);
+  mask.addEventListener('click', e => { if (e.target === mask) closeModal(); });
+  if (opts.onMount) opts.onMount(mask.querySelector('.modal'));
+}
+function closeModal() { $$('.modal-mask').forEach(m => m.remove()); }
+
+// ---------- Toast ----------
+function toast(msg, kind='') {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = `position:fixed;left:50%;bottom:calc(var(--tab-h) + 24px + var(--safe-bottom));transform:translateX(-50%);background:${kind==='danger'?'#e5484d':kind==='warn'?'#f59e0b':'#111827'};color:#fff;padding:8px 14px;border-radius:8px;font-size:14px;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.18);opacity:0;transition:opacity .15s`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.style.opacity = '1');
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 200); }, 1800);
+}
+
+// ---------- 内联 SVG 图标 ----------
+function iconBell() { return svg('<path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9zm6 13a2 2 0 002-2H10a2 2 0 002 2z"/>'); }
+function iconBook() { return svg('<path d="M4 4a2 2 0 012-2h12v18H6a2 2 0 01-2-2V4z"/><path d="M4 18a2 2 0 012-2h12"/>'); }
+function iconEdit() { return svg('<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/>'); }
+function iconBook2() { return svg('<path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>'); }
+function iconNews() { return svg('<path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>'); }
+function iconLink() { return svg('<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>'); }
+function iconCheck() { return svg('<path d="M20 6L9 17l-5-5"/>'); }
+function iconWarn() { return svg('<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/>'); }
+function iconStar() { return svg('<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>'); }
+function iconX() { return svg('<path d="M18 6L6 18M6 6l12 12"/>'); }
+function iconDownload() { return svg('<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>'); }
+function iconUpload() { return svg('<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/>'); }
+function iconTrash() { return svg('<path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>'); }
+function iconLock() { return svg('<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>'); }
+function svg(inner) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`; }
+
+// ---------- 主渲染 ----------
+function render(tab) {
+  if (tab === 'today' || !tab) renderToday();
+  if (tab === 'review' || !tab) renderReview();
+  if (tab === 'note' || !tab) renderNotes();
+  if (tab === 'library' || !tab) renderLibrary();
+  if (tab === 'news' || !tab) { renderNewsSources(); renderNews(); }
+}
+
+function renderAll() { render(currentTab); renderTabs(); }
+
+// ---------- 顶部操作栏 ----------
+function bindHeaderActions() {
+  const header = $('.app-actions');
+  header.innerHTML = `
+    <button class="btn sm" id="btn-lock" title="锁定 / 启用手令锁">${iconLock()}<span class="long-text">锁</span></button>
+    <button class="btn sm" id="btn-export" title="导出全部数据 JSON 备份">${iconDownload()}<span class="long-text">导出</span></button>
+    <button class="btn sm" id="btn-import" title="导入 JSON 备份">${iconUpload()}<span class="long-text">导入</span></button>
+    <button class="btn sm danger" id="btn-clear" title="清空全部数据">${iconTrash()}</button>
+  `;
+  $('#btn-lock').onclick = () => { if (isLockSet()) lockNow(); else showLock(); };
+  $('#btn-export').onclick = exportAll;
+  $('#btn-import').onclick = importAll;
+  $('#btn-clear').onclick = clearAll;
+}
+
+function bindModuleActions() {
+  $('#review-add')?.addEventListener('click', () => openReviewModal(null));
+  $('#review-search')?.addEventListener('input', e => { reviewFilter.q = e.target.value; renderReview(); });
+  $('#review-tags')?.addEventListener('change', e => { reviewFilter.tag = e.target.value; renderReview(); });
+  $('#review-export-resume')?.addEventListener('click', () => {
+    const from = prompt('开始日期 (YYYY-MM-DD)', daysAgo(90));
+    const to = prompt('结束日期 (YYYY-MM-DD)', todayStr());
+    if (from && to) exportReviewAsResume(from, to);
+  });
+  $('#review-weekly')?.addEventListener('click', generateWeeklyReport);
+
+  $('#note-add')?.addEventListener('click', () => {
+    const t = $('#note-text');
+    const v = t.value.trim(); if (!v) return;
+    Schema.notes.unshift({ id: uid(), ts: Date.now(), content: v });
+    save('notes'); t.value = ''; renderNotes(); renderToday();
+  });
+
+
+  $('#book-add')?.addEventListener('click', openBookModal);
+
+  $('#news-import')?.addEventListener('click', openNewsImport);
+  $('#news-note-save')?.addEventListener('click', () => {
+    const v = ($('#news-note')?.value || '').trim();
+    Schema.newsNotes = v; save('newsNotes'); toast('速览手记已保存');
+  });
+  $('#news-clear')?.addEventListener('click', () => {
+    if (!Schema.news.length) { toast('暂无资讯', 'warn'); return; }
+    if (confirm(`清空全部 ${Schema.news.length} 条资讯？`)) { Schema.news = []; save('news'); renderNews(); toast('已清空'); }
+  });
+
+  $('#ai-save-cfg')?.addEventListener('click', () => {
+    Schema.aiSettings = {
+      key: ($('#ai-key')?.value || '').trim(),
+      base: ($('#ai-base')?.value || '').trim() || 'https://api.deepseek.com/v1',
+      model: ($('#ai-model')?.value || '').trim() || 'deepseek-chat'
+    };
+    save('aiSettings'); toast('AI 配置已保存（仅存本机）');
+  });
+  $('#ai-book')?.addEventListener('change', e => { aiBookId = e.target.value; renderAIMessages(); });
+  $('#ai-send')?.addEventListener('click', aiSend);
+  $('#ai-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); aiSend(); }
+  });
+  $('#ai-clear-chat')?.addEventListener('click', () => {
+    const book = Schema.books.find(b => b.id === aiBookId);
+    if (!book) return;
+    if (confirm('清空与这本书的 AI 对话记录？')) { book.aiChat = []; save('books'); renderAIMessages(); }
+  });
+}
+
+// ---------- 本地口令锁 ----------
+const LOCK_KEY = 'lock';
+function lockHash(s) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return 'fnv' + h.toString(36);
+}
+function getLockHash() { return store.get(LOCK_KEY, null); }
+function isLockSet() { return !!getLockHash(); }
+function setLockPass(p) { store.set(LOCK_KEY, lockHash(p)); }
+function verifyPass(p) { return lockHash(p) === getLockHash(); }
+
+function showLock() {
+  const ls = $('#lock-screen'); if (!ls) return;
+  if (isLockSet()) {
+    $('#lock-set').style.display = 'none';
+    $('#lock-enter').style.display = '';
+    $('#lock-pass').value = '';
+    $('#lock-err').textContent = '';
+    setTimeout(() => $('#lock-pass')?.focus(), 50);
+  } else {
+    $('#lock-set').style.display = '';
+    $('#lock-enter').style.display = 'none';
+    $('#lock-pass1').value = '';
+    $('#lock-pass2').value = '';
+  }
+  ls.classList.add('show');
+  document.body.classList.add('locked');
+}
+function hideLock() {
+  $('#lock-screen')?.classList.remove('show');
+  document.body.classList.remove('locked');
+}
+function lockNow() { showLock(); }
+
+function bindLockUI() {
+  $('#lock-set-btn')?.addEventListener('click', () => {
+    const p1 = ($('#lock-pass1')?.value || '').trim();
+    const p2 = ($('#lock-pass2')?.value || '').trim();
+    if (p1.length < 4 || p1.length > 32) { toast('口令需 4–32 位', 'warn'); return; }
+    if (p1 !== p2) { toast('两次输入不一致', 'warn'); return; }
+    setLockPass(p1); hideLock(); toast('口令锁已启用');
+  });
+  $('#lock-skip')?.addEventListener('click', () => hideLock());
+  $('#lock-unlock-btn')?.addEventListener('click', () => {
+    const p = ($('#lock-pass')?.value || '');
+    if (verifyPass(p)) { hideLock(); toast('已解锁'); }
+    else { $('#lock-err').textContent = '口令错误，请重试'; }
+  });
+  $('#lock-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') $('#lock-unlock-btn').click(); });
+  $('#lock-forget')?.addEventListener('click', () => {
+    if (confirm('将清空全部本地数据并移除口令，此操作不可恢复。\n确定要重置吗？')) {
+      const c = prompt('请输入 CLEAR 以确认清空：');
+      if (c === 'CLEAR') { store.clearAll(); location.reload(); }
+      else if (c !== null) toast('未输入 CLEAR，已取消', 'warn');
+    }
+  });
+}
+
+// ---------- 启动 ----------
+function init() {
+  loadAll();
+  if (!Schema.settings.onboarded || !Schema.reviews.length) seedSample();
+  bindHeaderActions();
+  bindModuleActions();
+  bindLockUI();
+  renderTabs();
+  renderAll();
+  currentTab = 'today';
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-today'));
+  renderTabs();
+
+  if (isLockSet()) showLock(); else hideLock();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW 注册失败', err));
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
