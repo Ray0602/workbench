@@ -405,6 +405,12 @@ hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
 }
 .note-row .x:hover { color: var(--danger); }
 
+/* 书单统计卡（沿用轻记录配色体系） */
+.lib-stats-card { padding: 12px 14px 14px; }
+.note-stat.s-reading { background: var(--pending-soft); } .note-stat.s-reading .num { color: var(--pending); }
+.note-stat.s-wish    { background: var(--warm-soft); }    .note-stat.s-wish .num { color: var(--warm-deep); }
+.note-stat.s-done    { background: #DCFCE7; }             .note-stat.s-done .num { color: #16a34a; }
+
 .note-empty { padding: 28px 16px; text-align: center; color: var(--muted); }
 
 @media (max-width: 768px) {
@@ -601,7 +607,19 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
     <div class="toolbar">
       <button class="btn primary" id="book-add">+ 添加一本书</button>
     </div>
-    <div class="card"><div id="book-list"></div></div>
+    <div class="card lib-stats-card"><div id="book-stats"></div></div>
+    <div class="card note-tabs-card">
+      <div class="note-tabs-head">
+        <span class="title">${iconBook2()} 书架</span>
+        <div class="note-filter" id="book-filter">
+          <button data-f="all" class="active">全部</button>
+          <button data-f="reading">在读</button>
+          <button data-f="wish">想读</button>
+          <button data-f="done">读完</button>
+        </div>
+      </div>
+      <div id="book-list"></div>
+    </div>
     <div class="card" id="ai-card">
       <h2>读书 AI 讨论 <span class="hint">填自己的 Key，纯本地调用</span></h2>
       <div class="ai-settings">
@@ -1194,39 +1212,61 @@ function fmtHM(d) {
 
 
 // ---------- 书单 ----------
-function renderLibrary() {
-  const root = $('#book-list'); if (!root) return;
-  const list = [...Schema.books].sort((a,b) => {
-    const order = { reading: 0, wish: 1, done: 2 };
-    return order[a.status] - order[b.status] || (b.addedAt||'').localeCompare(a.addedAt||'');
-  });
-  if (!list.length) { root.innerHTML = '<div class="empty">书架空空的，加一本开始 📚</div>'; return; }
-  root.innerHTML = list.map(b => {
-    const pct = b.total ? Math.min(100, Math.round(b.current / b.total * 100)) : 0;
-    const statusLabel = { reading: '在读', wish: '想读', done: '读完' }[b.status];
-    const coverColor = pickColor(b.title);
-    return `
-      <div class="book-item">
-        <div class="cover" style="background:${coverColor}">${escapeHTML(b.title.slice(0,2))}</div>
-        <div class="info">
-          <div class="t">${escapeHTML(b.title)} <span class="hint" style="font-weight:normal">· ${statusLabel}</span></div>
-          <div class="a">${escapeHTML(b.author || '佚名')}</div>
-          <div class="p">
-            <div class="bar"><span style="width:${pct}%"></span></div>
-            <span class="pt">${b.current||0}/${b.total||'?'} 页 · ${pct}%</span>
-          </div>
-          ${b.quote ? `<div style="margin-top:6px;font-size:12px;color:var(--muted);font-style:italic;border-left:3px solid var(--border);padding-left:8px">${escapeHTML(b.quote)}</div>` : ''}
-          <div class="row" style="margin-top:8px;gap:6px">
-            ${b.status === 'reading' ? `<button class="btn sm" data-act="prog" data-id="${b.id}">+ 进度</button>` : ''}
-            ${b.status === 'wish' ? `<button class="btn sm" data-act="start" data-id="${b.id}">开始读</button>` : ''}
-            ${b.status === 'reading' ? `<button class="btn sm" data-act="done" data-id="${b.id}">标记读完</button>` : ''}
-            ${b.status === 'done' ? `<button class="btn sm" data-act="redo" data-id="${b.id}">重新读</button>` : ''}
-            <button class="btn sm" data-act="quote" data-id="${b.id}">编辑摘录</button>
-            <button class="btn sm danger" data-act="del" data-id="${b.id}">${iconX()}</button>
-          </div>
+let libFilter = 'all';
+function dayLabel(d) {
+  if (d === todayStr()) return '今天';
+  if (d === daysAgo(1)) return '昨天';
+  return d;
+}
+function bookItemHTML(b) {
+  const pct = b.total ? Math.min(100, Math.round((b.current||0) / b.total * 100)) : 0;
+  const statusLabel = { reading: '在读', wish: '想读', done: '读完' }[b.status];
+  const coverColor = pickColor(b.title);
+  return `
+    <div class="book-item">
+      <div class="cover" style="background:${coverColor}">${escapeHTML(b.title.slice(0,2))}</div>
+      <div class="info">
+        <div class="t">${escapeHTML(b.title)} <span class="hint" style="font-weight:normal">· ${statusLabel}</span></div>
+        <div class="a">${escapeHTML(b.author || '佚名')}</div>
+        <div class="p">
+          <div class="bar"><span style="width:${pct}%"></span></div>
+          <span class="pt">${b.current||0}/${b.total||'?'} 页 · ${pct}%</span>
+        </div>
+        ${b.quote ? `<div style="margin-top:6px;font-size:12px;color:var(--muted);font-style:italic;border-left:3px solid var(--border);padding-left:8px">${escapeHTML(b.quote)}</div>` : ''}
+        <div class="row" style="margin-top:8px;gap:6px">
+          ${b.status === 'reading' ? `<button class="btn sm" data-act="prog" data-id="${b.id}">+ 进度</button>` : ''}
+          ${b.status === 'wish' ? `<button class="btn sm" data-act="start" data-id="${b.id}">开始读</button>` : ''}
+          ${b.status === 'reading' ? `<button class="btn sm" data-act="done" data-id="${b.id}">标记读完</button>` : ''}
+          ${b.status === 'done' ? `<button class="btn sm" data-act="redo" data-id="${b.id}">重新读</button>` : ''}
+          <button class="btn sm" data-act="quote" data-id="${b.id}">编辑摘录</button>
+          <button class="btn sm danger" data-act="del" data-id="${b.id}">${iconX()}</button>
         </div>
       </div>
-    `;
+    </div>
+  `;
+}
+function renderLibrary() {
+  const root = $('#book-list'); if (!root) return;
+  const all = Schema.books;
+  // 统计卡
+  $('#book-stats').innerHTML = `
+    <div class="note-stats">
+      <div class="note-stat s-reading"><span class="num">${all.filter(b=>b.status==='reading').length}</span><span class="lbl">在读</span></div>
+      <div class="note-stat s-wish"><span class="num">${all.filter(b=>b.status==='wish').length}</span><span class="lbl">想读</span></div>
+      <div class="note-stat s-done"><span class="num">${all.filter(b=>b.status==='done').length}</span><span class="lbl">读完</span></div>
+      <div class="note-stat s-total"><span class="num">${all.length}</span><span class="lbl">累计</span></div>
+    </div>`;
+  // 状态过滤
+  const list = (libFilter === 'all' ? all : all.filter(b => b.status === libFilter)).slice()
+    .sort((a,b) => (b.addedAt||'').localeCompare(a.addedAt||''));
+  if (!list.length) { root.innerHTML = `<div class="empty">这个分类下还没有书 📚</div>`; renderAIPanel(); return; }
+  // 按加入日期分组
+  const groups = {};
+  list.forEach(b => { const d = b.addedAt || '未知日期'; (groups[d] = groups[d] || []).push(b); });
+  const dates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  root.innerHTML = dates.map(d => {
+    const items = groups[d];
+    return `<div class="note-day"><div class="note-day-head"><span class="h">${dayLabel(d)}</span><span class="meta">${items.length} 本</span><span class="hr"></span></div>${items.map(bookItemHTML).join('')}</div>`;
   }).join('');
   root.onclick = e => {
     const b = e.target.closest('button[data-act]'); if (!b) return;
@@ -1871,6 +1911,12 @@ function bindModuleActions() {
 
 
   $('#book-add')?.addEventListener('click', openBookModal);
+  $('#book-filter')?.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-f]'); if (!btn) return;
+    libFilter = btn.dataset.f;
+    [...$('#book-filter').children].forEach(c => c.classList.toggle('active', c === btn));
+    renderLibrary();
+  });
 
   $('#news-import')?.addEventListener('click', openNewsImport);
   $('#news-note-save')?.addEventListener('click', () => {
