@@ -295,6 +295,124 @@ hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
 .tag-input .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--primary-soft); color: var(--primary-deep); border-radius: 999px; font-size: 13px; }
 .tag-input .pill button { appearance: none; border: 0; background: transparent; color: var(--primary-deep); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
 
+/* ===== 轻记录（设计图：随手记一笔 + 完成记录） ===== */
+:root {
+  --warm: #d97706;          /* 暖橙（设计图主调之一） */
+  --warm-soft: #fef3c7;     /* 浅米底 */
+  --warm-deep: #b45309;
+  --pending: #2563EB;       /* 待办蓝 */
+  --pending-soft: #DBEAFE;
+}
+.note-compose { padding: 14px 16px; }
+.note-compose-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.note-compose-head .title { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text); }
+.note-compose-head .title svg { color: var(--warm); }
+.note-compose-head .sub { font-size: 12px; color: var(--muted); }
+#note-text {
+  width: 100%; min-height: 60px; resize: vertical; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 12px; background: #fffdf8;
+  font: inherit; font-size: 16px; color: var(--text); outline: none;
+  box-sizing: border-box;
+}
+#note-text:focus { border-color: var(--warm); background: #fff; }
+.note-cat { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.note-cat button {
+  appearance: none; border: 1px solid var(--border); background: #fff;
+  color: var(--text); padding: 7px 14px; border-radius: 999px; font: inherit; font-size: 14px;
+  cursor: pointer; min-height: 36px;
+}
+.note-cat button.active { background: var(--warm); color: #fff; border-color: var(--warm); }
+.note-cat button:hover:not(.active) { border-color: var(--warm); }
+.note-act { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.note-act .btn { width: 100%; min-height: 44px; font-size: 15px; }
+.btn.warm { background: var(--warm); color: #fff; border-color: var(--warm); }
+.btn.warm:hover { background: var(--warm-deep); border-color: var(--warm-deep); }
+
+/* 统计卡 */
+#note-stats-card { padding: 12px 14px 14px; }
+.note-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.note-stat {
+  padding: 14px 12px; border-radius: 14px; text-align: center;
+  background: #f7f5f1;
+}
+.note-stat .num { display: block; font-size: 28px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.note-stat .lbl { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.note-stat.s-done-today { background: #DCFCE7; } .note-stat.s-done-today .num { color: #16a34a; }
+.note-stat.s-done-week  { background: var(--warm-soft); } .note-stat.s-done-week  .num { color: var(--warm-deep); }
+.note-stat.s-total      { background: #f5e8da; } .note-stat.s-total      .num { color: #92400e; }
+.note-stat.s-pending    { background: var(--pending-soft); } .note-stat.s-pending    .num { color: var(--pending); }
+
+/* 列表区头部 + 过滤 tab */
+.note-tabs-card { padding: 0; }
+.note-tabs-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px; border-bottom: 1px dashed var(--border);
+}
+.note-tabs-head .title { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text); }
+.note-tabs-head .title svg { color: var(--warm); }
+.note-filter { display: inline-flex; gap: 6px; }
+.note-filter button {
+  appearance: none; border: 1px solid var(--border); background: #fff;
+  color: var(--text); padding: 6px 14px; border-radius: 999px; font: inherit; font-size: 13px;
+  cursor: pointer; min-height: 32px;
+}
+.note-filter button.active { background: var(--warm); color: #fff; border-color: var(--warm); }
+
+/* 日分组 */
+.note-day { padding: 14px 16px 6px; }
+.note-day-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.note-day-head .h { font-size: 13px; color: var(--text); font-weight: 600; }
+.note-day-head .meta { font-size: 12px; color: var(--muted); }
+.note-day-head .meta b { color: var(--warm); }
+.note-day-head .hr { flex: 1; height: 1px; background: var(--border); }
+
+/* 单条 */
+.note-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px dashed var(--border);
+}
+.note-row:last-child { border-bottom: 0; }
+.note-row .check-btn {
+  appearance: none; border: 1px solid var(--border); background: #fff;
+  width: 28px; height: 28px; border-radius: 8px; display: inline-flex;
+  align-items: center; justify-content: center; color: #16a34a; flex-shrink: 0; cursor: pointer;
+}
+.note-row .check-btn.done { background: #16a34a; border-color: #16a34a; color: #fff; }
+.note-row .check-btn svg { width: 16px; height: 16px; }
+.note-row .body { flex: 1; min-width: 0; }
+.note-row .text {
+  font-size: 15px; line-height: 1.5; color: var(--text);
+  word-break: break-word; white-space: pre-wrap;
+}
+.note-row.done .text { color: var(--muted); text-decoration: line-through; }
+.note-row .meta-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.note-row .cat-pill {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px;
+  background: var(--warm-soft); color: var(--warm-deep);
+}
+.note-row .pending-tag { font-size: 11px; color: var(--pending); display: inline-flex; align-items: center; gap: 3px; }
+.note-row .pending-tag.overdue { color: var(--danger); font-weight: 600; }
+.note-row .defer-btn {
+  appearance: none; border: 1px dashed var(--border); background: transparent;
+  color: var(--muted); padding: 4px 10px; border-radius: 999px; font-size: 12px; cursor: pointer;
+}
+.note-row .defer-btn:hover { color: var(--primary); border-color: var(--primary); }
+.note-row .x {
+  appearance: none; border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.note-row .x:hover { color: var(--danger); }
+
+.note-empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+
+@media (max-width: 768px) {
+  .note-compose { padding: 12px; }
+  .note-act { gap: 8px; }
+  .note-tab-wrap { padding: 10px 12px 14px; }
+}
+
 /* svg chart */
 svg.chart { display:block; max-width: 100%; }
 .axis text { font-size: 10px; fill: var(--muted); }
@@ -451,13 +569,28 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
 
   <!-- 轻记录 -->
   <section class="view" id="view-note">
-    <div class="card">
-      <div class="row" style="gap:8px">
-        <input type="text" id="note-text" placeholder="随手记一笔：刚想到的事 / 一闪而过的灵感…" style="flex:1" />
-        <button class="btn primary" id="note-add">记下来</button>
+    <div class="card note-compose" id="note-compose">
+      <div class="note-compose-head">
+        <span class="title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 随手记一笔</span>
+        <span class="sub">不预排计划，做了就记</span>
       </div>
+      <textarea id="note-text" placeholder="今天做了什么？回车即可保存" rows="2"></textarea>
+      <div class="note-cat" id="note-cats" data-cat="工作"></div>
+      <div class="note-act">
+        <button class="btn primary warm" id="note-add-done">✓ 记为已完成</button>
+        <button class="btn" id="note-add-pending">⏱ 先惦记着</button>
+      </div>
+      <div class="hint" style="margin-top:8px">「先惦记着」= 轻量待办。没做完不会消失，第二天自动出现在顶部「今天要处理」。</div>
     </div>
-    <div class="card" style="padding:0">
+    <div class="card" id="note-stats-card"></div>
+    <div class="card note-tabs-card">
+      <div class="note-tabs-head">
+        <span class="title">完成记录</span>
+        <div class="note-filter" id="note-filter" data-filter="全部">
+          <button data-f="全部" class="active">全部</button>
+          <button data-f="待办">待办</button>
+        </div>
+      </div>
       <div id="note-list"></div>
     </div>
   </section>
@@ -552,7 +685,7 @@ const store = {
 // ---------- 数据结构 ----------
 const Schema = {
   reviews: [],   // {id, date, done, problem, achievement, tags:[]}
-  notes: [],     // {id, ts, content}
+  notes: [],     // {id, ts, content, category:'工作'|'生活'|'学习'|'其他', status:'done'|'pending', doneAt?, pendingNextDate?}
   books: [],     // {id, title, author, total, current, status:'reading'|'done'|'wish', quote, addedAt}
   news: [],      // {id, date, category, source, title, summary, url, ts}
   newsNotes: '', // 自填速览手记（纯本地）
@@ -565,6 +698,17 @@ function loadAll() {
     const v = store.get(k, null);
     if (v !== null) Schema[k] = v;
   });
+  migrateNotes();
+}
+// 老 notes 仅 {id, ts, content}：全部补 category='其他'、status='done'、doneAt=ts，保留原文
+function migrateNotes() {
+  let changed = false;
+  Schema.notes = (Schema.notes || []).map(n => {
+    if (n && n.status && n.category) return n;
+    changed = true;
+    return Object.assign({}, n, { category: n && n.category ? n.category : '其他', status: 'done', doneAt: n && n.ts ? n.ts : Date.now() });
+  });
+  if (changed) { try { localStorage.setItem(KEY + 'notes', JSON.stringify(Schema.notes)); } catch {} }
 }
 function save(key) { store.set(key, Schema[key]); }
 function saveAll() { Object.keys(Schema).forEach(save); scheduleAutoBackup(); }
@@ -579,8 +723,10 @@ function seedSample() {
   ];
   Schema.notes = [
     { id: uid(), ts: Date.now() - 3600*1000*4, content: '今天的工位 C 良率偏低，记得复盘下。' },
-    { id: uid(), ts: Date.now() - 3600*1000*1.5, content: '看到一个不错的看板模板，回头整理到工作台。' },
-    { id: uid(), ts: Date.now() - 600*1000, content: '晚上去跑步 30 分钟。' }
+    { id: uid(), ts: Date.now() - 3600*1000*28, content: '看到一个不错的看板模板，回头整理到工作台。', category: '工作', status: 'done', doneAt: Date.now() - 3600*1000*28 },
+    { id: uid(), ts: Date.now() - 3600*1000*40, content: '晚上去跑步 30 分钟。', category: '生活', status: 'done', doneAt: Date.now() - 3600*1000*40 },
+    { id: uid(), ts: Date.now() - 600*1000, content: '追踪客户 K23 第二批试产排期并同步给研发', category: '工作', status: 'pending', pendingNextDate: todayStr() },
+    { id: uid(), ts: Date.now() - 3600*1000*6, content: '整理热门阅读书签', category: '学习', status: 'pending', pendingNextDate: daysAgo(1) }
   ];
   Schema.books = [
     { id: uid(), title: '项目管理之美', author: 'Scott Berkun', total: 220, current: 88, status: 'reading', quote: '"衡量一个项目是否成功，要看它是否解决了最初要解决的问题。"', addedAt: daysAgo(20) },
@@ -634,6 +780,18 @@ function renderToday() {
   const yestReview = Schema.reviews.find(r => r.date === daysAgo(1));
   if (yestReview && !yestReview.done && !yestReview.problem && !yestReview.risk && !yestReview.achievement) {
     items.push({ key:'review-yest', label: `昨日 (${daysAgo(1)}) 复盘未完成`, meta: '已自动顺延', overdue: true, action: '补', cb: () => openReviewModal(yestReview.id) });
+  }
+
+  // 轻记录：pending 待办的"今日要处理"汇总
+  const tToday = todayStr();
+  const pendNotes = (Schema.notes||[]).filter(n => n.status === 'pending');
+  const overdueNotes = pendNotes.filter(n => (n.pendingNextDate || tToday) < tToday);
+  if (overdueNotes.length) {
+    items.push({ key:'notes-overdue', label: `${overdueNotes.length} 条轻记录待办已逾期`, meta: '已自动顺延', overdue: true, action: '查看', cb: () => { noteFilter.filter = '待办'; switchTab('note'); } });
+  }
+  const todayNotes = pendNotes.filter(n => (n.pendingNextDate || tToday) === tToday);
+  if (todayNotes.length) {
+    items.push({ key:'notes-today', label: `${todayNotes.length} 条轻记录待办今天要处理`, meta: '', overdue: false, action: '查看', cb: () => { noteFilter.filter = '待办'; switchTab('note'); } });
   }
 
 
@@ -867,25 +1025,166 @@ function generateWeeklyReport() {
 }
 
 // ---------- 轻记录 ----------
-function renderNotes() {
-  const list = $('#note-list'); if (!list) return;
-  const items = [...Schema.notes].sort((a,b) => b.ts - a.ts);
+const NOTE_CATS = ['工作','生活','学习','其他'];
+let noteFilter = { filter: '全部', cat: '工作' }; // filter: 全部|待办；cat: 当前选中分类
+
+function renderNoteCats(root) {
+  // 最近使用优先：按 records 中 status=done 的 category 出现次数排
+  const counts = { '工作':0,'生活':0,'学习':0,'其他':0 };
+  (Schema.notes||[]).forEach(n => { if (n.category && counts[n.category] !== undefined) counts[n.category]++; });
+  const order = [...NOTE_CATS].sort((a,b) => counts[b] - counts[a] || NOTE_CATS.indexOf(a) - NOTE_CATS.indexOf(b));
+  root.innerHTML = order.map(c => `<button data-c="${c}" class="${c===noteFilter.cat?'active':''}">${c}</button>`).join('');
+  root.onclick = e => {
+    const b = e.target.closest('button[data-c]'); if (!b) return;
+    noteFilter.cat = b.dataset.c;
+    renderNotes();
+  };
+}
+
+function renderNoteFilterTabs(root) {
+  root.querySelectorAll('button[data-f]').forEach(b => {
+    b.classList.toggle('active', b.dataset.f === noteFilter.filter);
+    b.onclick = () => { noteFilter.filter = b.dataset.f; renderNotes(); };
+  });
+}
+
+function renderNoteStats(root) {
+  const t = todayStr();
+  const dayCutoff = Date.now() - 7*24*3600*1000;
+  let dt = 0, dw = 0, total = 0, pend = 0;
+  (Schema.notes||[]).forEach(n => {
+    if (n.status === 'done') {
+      total++;
+      const tms = n.doneAt || n.ts || 0;
+      if (fmtDate(tms) === t) dt++;
+      if (tms >= dayCutoff) dw++;
+    } else if (n.status === 'pending') {
+      pend++;
+    }
+  });
+  root.innerHTML = `
+    <div class="note-stats">
+      <div class="note-stat s-done-today"><span class="num">${dt}</span><span class="lbl">今日已完成</span></div>
+      <div class="note-stat s-done-week"><span class="num">${dw}</span><span class="lbl">近 7 天完成</span></div>
+      <div class="note-stat s-total"><span class="num">${total}</span><span class="lbl">累计记录</span></div>
+      <div class="note-stat s-pending"><span class="num">${pend}</span><span class="lbl">待办剩余</span></div>
+    </div>`;
+}
+
+function fmtDayGroup(t) {
+  const today = todayStr();
+  if (t === today) return { label: '今天', key: 'today' };
+  if (t === daysAgo(1)) return { label: '昨天', key: 'yesterday' };
+  return { label: t, key: t };
+}
+
+function renderNoteList(root) {
+  let items = [...(Schema.notes||[])];
+  if (noteFilter.filter === '待办') items = items.filter(n => n.status === 'pending');
+  // 排序：pending 优先（到期在前），然后 ts 倒序
+  items.sort((a,b) => {
+    const pa = a.status === 'pending' ? 0 : 1;
+    const pb = b.status === 'pending' ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    const ax = a.status==='pending' ? (a.pendingNextDate||'') : fmtDate(a.doneAt || a.ts);
+    const bx = b.status==='pending' ? (b.pendingNextDate||'') : fmtDate(b.doneAt || b.ts);
+    return bx.localeCompare(ax) || (b.id||'').localeCompare(a.id||'');
+  });
   if (!items.length) {
-    list.innerHTML = `<div class="empty">还没有轻记录。在上面写下第一句 ✏️</div>`;
+    root.innerHTML = `<div class="note-empty">${noteFilter.filter==='待办' ? '没有待办 🎉' : '还没有轻记录，写下第一句 ✏️'}</div>`;
     return;
   }
-  list.innerHTML = items.map(n => `
-    <div class="note-item">
-      <div class="t">${fmtHM(new Date(n.ts))}</div>
-      <div class="c">${escapeHTML(n.content)}</div>
-      <div class="x" data-id="${n.id}" title="删除">${iconX()}</div>
-    </div>
-  `).join('');
-  list.onclick = e => {
-    const x = e.target.closest('.x'); if (!x) return;
-    Schema.notes = Schema.notes.filter(n => n.id !== x.dataset.id);
-    save('notes'); renderNotes(); renderToday();
+  // 按日期分组键（pending 用 pendingNextDate，done 用 doneAt 日期）
+  const groups = new Map();
+  items.forEach(n => {
+    const t = n.status === 'pending' ? (n.pendingNextDate || todayStr()) : fmtDate(n.doneAt || n.ts);
+    if (!groups.has(t)) groups.set(t, []);
+    groups.get(t).push(n);
+  });
+  const t = todayStr();
+  const dAgo1 = daysAgo(1);
+  let dayMetaHtml = (gDate) => {
+    if (gDate === t) return { meta: '今天', fresh: true };
+    if (gDate === dAgo1) {
+      const done = (Schema.notes||[]).filter(n => n.status==='done' && fmtDate(n.doneAt||n.ts) === gDate).length;
+      const total = done + (Schema.notes||[]).filter(n => n.status==='pending' && n.pendingNextDate===gDate).length;
+      return { meta: `${done} 完成 / ${total} 条` };
+    }
+    const done = (Schema.notes||[]).filter(n => n.status==='done' && fmtDate(n.doneAt||n.ts) === gDate).length;
+    return { meta: `${done} 完成` };
   };
+  let html = '';
+  for (const [gDate, list] of groups) {
+    const g = fmtDayGroup(gDate);
+    const m = dayMetaHtml(gDate);
+    const overdueTag = gDate < t ? `<span style="color:var(--danger);font-weight:600">已逾期</span> · ` : '';
+    html += `<div class="note-day"><div class="note-day-head"><span class="h">${escapeHTML(g.label)}</span><span class="meta">${m.fresh ? '' : overdueTag}${escapeHTML(m.meta)}</span><span class="hr"></span></div>`;
+    list.forEach(n => {
+      const isDone = n.status === 'done';
+      const overdue = !isDone && (n.pendingNextDate || todayStr()) < t;
+      html += `
+        <div class="note-row ${isDone?'done':''}" data-id="${n.id}">
+          <button class="check-btn ${isDone?'done':''}" data-act="toggle" title="${isDone?'标记为待办':'标记为已完成'}">
+            ${isDone ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>` : ''}
+          </button>
+          <div class="body">
+            <div class="text">${escapeHTML(n.content)}</div>
+            <div class="meta-row">
+              <span class="cat-pill">${escapeHTML(n.category || '其他')}</span>
+              ${isDone ? '' : `<span class="pending-tag ${overdue?'overdue':''}">⏱ ${overdue?'逾期待办':'待办'}${n.pendingNextDate ? ' · 顺延到 ' + escapeHTML(n.pendingNextDate) : ''}</span>`}
+              ${isDone ? `<span class="hint" style="font-size:12px">${escapeHTML(fmtHM(new Date(n.doneAt || n.ts)))}</span>` : ''}
+              ${isDone ? '' : `<button class="defer-btn" data-act="defer" title="顺延到明天">顺延一天</button>`}
+            </div>
+          </div>
+          <button class="x" data-act="del" title="删除">${iconX()}</button>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  root.innerHTML = html;
+  root.onclick = e => {
+    const row = e.target.closest('.note-row'); if (!row) return;
+    const id = row.dataset.id;
+    const n = (Schema.notes||[]).find(x => x.id === id); if (!n) return;
+    const btn = e.target.closest('button[data-act]');
+    if (btn && btn.dataset.act === 'toggle') {
+      if (n.status === 'done') {
+        n.status = 'pending';
+        n.pendingNextDate = n.pendingNextDate || todayStr();
+        delete n.doneAt;
+      } else {
+        n.status = 'done';
+        n.doneAt = Date.now();
+        delete n.pendingNextDate;
+      }
+      save('notes'); renderNotes(); renderToday();
+      return;
+    }
+    if (btn && btn.dataset.act === 'defer') {
+      const d = new Date(n.pendingNextDate || todayStr());
+      d.setDate(d.getDate() + 1);
+      n.pendingNextDate = d.toISOString().slice(0,10);
+      save('notes'); renderNotes(); renderToday();
+      return;
+    }
+    if (btn && btn.dataset.act === 'del') {
+      if (!confirm('删除这条轻记录？')) return;
+      Schema.notes = Schema.notes.filter(x => x.id !== id);
+      save('notes'); renderNotes(); renderToday();
+      return;
+    }
+  };
+}
+
+function renderNotes() {
+  const stats = $('#note-stats-card'); if (!stats) return;
+  const cats = $('#note-cats');
+  const filter = $('#note-filter');
+  const list = $('#note-list');
+  renderNoteStats(stats);
+  if (cats) renderNoteCats(cats);
+  if (filter) renderNoteFilterTabs(filter);
+  renderNoteList(list);
 }
 
 function fmtHM(d) {
@@ -1538,11 +1837,36 @@ function bindModuleActions() {
   });
   $('#review-weekly')?.addEventListener('click', generateWeeklyReport);
 
-  $('#note-add')?.addEventListener('click', () => {
-    const t = $('#note-text');
-    const v = t.value.trim(); if (!v) return;
-    Schema.notes.unshift({ id: uid(), ts: Date.now(), content: v });
-    save('notes'); t.value = ''; renderNotes(); renderToday();
+  const nt = $('#note-text');
+  const grabContent = () => {
+    const ta = $('#note-text'); if (!ta) return '';
+    return ta.value.trim();
+  };
+  const clearAndRender = () => { nt.value = ''; renderNotes(); renderToday(); };
+  const addAs = (status) => {
+    const v = grabContent(); if (!v) return;
+    const item = {
+      id: uid(), ts: Date.now(), content: v,
+      category: noteFilter.cat || '其他', status,
+    };
+    if (status === 'done') {
+      item.doneAt = Date.now();
+    } else {
+      item.pendingNextDate = todayStr();
+    }
+    Schema.notes.unshift(item);
+    save('notes'); clearAndRender();
+    toast(status === 'done' ? '已记为已完成' : '已先惦记着');
+  };
+  $('#note-add-done')?.addEventListener('click', () => addAs('done'));
+  $('#note-add-pending')?.addEventListener('click', () => addAs('pending'));
+  nt?.addEventListener('keydown', e => {
+    // 回车 = 走默认「已完成」；Shift/Cmd+Enter 走惦记着
+    if (e.key === 'Enter' && !e.shiftKey && !e.metaKey) {
+      if (e.isComposing) return;
+      e.preventDefault();
+      if (e.altKey) addAs('pending'); else addAs('done');
+    }
   });
 
 
