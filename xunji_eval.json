@@ -101,8 +101,8 @@
         85
       ],
       "strength": "练得最勤、覆盖最广（157 天 / 51 个动作）；三头孤立（绳索·器械臂屈伸、下压）容量足，器械三头下压冲到 170kg。",
-      "weakness": "二头偏弱，弯举多为绳索/器械孤立动作，自由重量复合（杠铃弯举、窄距卧推）少，缺大重量复合带动整体臂围。",
-      "advice": "加杠铃弯举与窄距卧推等自由重量复合，2–3 组×8–10 冲重量；保持现有高频，二头三头分开给容量。",
+      "weakness": "二头偏弱，弯举多为绳索/器械孤立动作，自由重量复合（哑铃弯举、窄距卧推）少，缺大重量复合带动整体臂围。",
+      "advice": "加哑铃弯举与哑铃颈后臂屈伸等自由重量复合，2–3 组×8–10 冲重量；保持现有高频，二头三头分开给容量。",
       "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#6366f1\" text-anchor=\"middle\">手臂 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,55.0 245.0,150.0 150.0,170.9 69.2,150.0\" fill=\"#6366f122\" stroke=\"#6366f1\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"55.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"245.0\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"150.0\" cy=\"170.9\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"69.2\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><text x=\"150.0\" y=\"47.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"245.0\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150.0\" y=\"162.9\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">22</text><text x=\"69.2\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">85</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 157 · 动作 51 种 · 组 1222</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 188,926kg · 最大 170kg（器械三头下压）</text></svg>"
     },
     "胸": {
@@ -162,8 +162,8 @@
         65
       ],
       "strength": "上胸（上斜哑铃/史密斯卧推）扎实且以自由重量为主，中缝/下胸有夹胸与器械推胸覆盖。",
-      "weakness": "五大部位中训练日最少（仅 69 天，约为背/肩一半）；平板杠铃卧推仅 13 次，绝对力量以器械推胸 130kg 封顶。",
-      "advice": "频率提到每周 1 次（独立胸日或推日合并）；加平板杠铃卧推做 5×5 冲重量；保留上斜优势。",
+      "weakness": "五大部位中训练日最少（仅 69 天，约为背/肩一半）；自由重量平板卧推仅 13 次，绝对力量以器械推胸 130kg 封顶。",
+      "advice": "频率提到每周 1 次（独立胸日或推日合并）；加哑铃平板卧推做 5×5 冲重量；保留上斜优势。",
       "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#ef4444\" text-anchor=\"middle\">胸 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,108.2 206.1,150.0 150.0,189.9 88.2,150.0\" fill=\"#ef444422\" stroke=\"#ef4444\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"108.2\" r=\"3.5\" fill=\"#ef4444\"/><circle cx=\"206.1\" cy=\"150.0\" r=\"3.5\" fill=\"#ef4444\"/><circle cx=\"150.0\" cy=\"189.9\" r=\"3.5\" fill=\"#ef4444\"/><circle cx=\"88.2\" cy=\"150.0\" r=\"3.5\" fill=\"#ef4444\"/><text x=\"150.0\" y=\"100.2\" font-size=\"10\" fill=\"#ef4444\" text-anchor=\"middle\" font-weight=\"700\">44</text><text x=\"206.1\" y=\"142.0\" font-size=\"10\" fill=\"#ef4444\" text-anchor=\"middle\" font-weight=\"700\">59</text><text x=\"150.0\" y=\"181.9\" font-size=\"10\" fill=\"#ef4444\" text-anchor=\"middle\" font-weight=\"700\">42</text><text x=\"88.2\" y=\"142.0\" font-size=\"10\" fill=\"#ef4444\" text-anchor=\"middle\" font-weight=\"700\">65</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 69 · 动作 30 种 · 组 867</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 350,098kg · 最大 130kg（器械推胸）</text></svg>"
     },
     "肩膀": {
@@ -223,8 +223,8 @@
         60
       ],
       "strength": "后束极其充分（反向飞鸟 46、俯身飞鸟 26、俯身绳索侧平举 23）——多数人的薄弱点你练得很好；中束（侧平举 44）也足，频次高（137 天）。",
-      "weakness": "前束/推举绝对重量中等（器械坐姿推举 120kg 封顶），站姿杠铃推举仅 26 次，自由重量推举比例可再提。",
-      "advice": "保持后束优势；加站姿杠铃推举、阿诺德推举等自由重量前中束复合，提升推举力量与肩宽。",
+      "weakness": "前束/推举绝对重量中等（器械坐姿推举 120kg 封顶），站姿推举仅 26 次，自由重量推举比例可再提。",
+      "advice": "保持后束优势；加哑铃推举、阿诺德推举等自由重量前中束复合，提升推举力量与肩宽。",
       "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#f59e0b\" text-anchor=\"middle\">肩膀 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,67.3 213.7,150.0 150.0,217.4 93.0,150.0\" fill=\"#f59e0b22\" stroke=\"#f59e0b\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"67.3\" r=\"3.5\" fill=\"#f59e0b\"/><circle cx=\"213.7\" cy=\"150.0\" r=\"3.5\" fill=\"#f59e0b\"/><circle cx=\"150.0\" cy=\"217.4\" r=\"3.5\" fill=\"#f59e0b\"/><circle cx=\"93.0\" cy=\"150.0\" r=\"3.5\" fill=\"#f59e0b\"/><text x=\"150.0\" y=\"59.3\" font-size=\"10\" fill=\"#f59e0b\" text-anchor=\"middle\" font-weight=\"700\">87</text><text x=\"213.7\" y=\"142.0\" font-size=\"10\" fill=\"#f59e0b\" text-anchor=\"middle\" font-weight=\"700\">67</text><text x=\"150.0\" y=\"209.4\" font-size=\"10\" fill=\"#f59e0b\" text-anchor=\"middle\" font-weight=\"700\">71</text><text x=\"93.0\" y=\"142.0\" font-size=\"10\" fill=\"#f59e0b\" text-anchor=\"middle\" font-weight=\"700\">60</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 137 · 动作 34 种 · 组 1888</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 597,654kg · 最大 120kg（器械坐姿推举）</text></svg>"
     },
     "腿": {
@@ -284,8 +284,8 @@
         100
       ],
       "strength": "覆盖最全面：股四（深蹲/腿屈伸）、腘绳（腿弯举）、臀（臀冲）、髋（内收/外展）都练到，估算容量五大部位最高（84 万 kg），小腿杠杆机器冲 200kg。",
-      "weakness": "深蹲以机器哈克/箭步蹲为主，杠铃深蹲与罗马尼亚硬拉（仅 7 次）偏少，自由重量大重量复合不足，绝对力量上限未充分开发。",
-      "advice": "加杠铃深蹲/前蹲与加重罗马尼亚硬拉，5×5 冲大重量；硬拉补足后链。",
+      "weakness": "深蹲以机器哈克/箭步蹲为主，自由重量深蹲与罗马尼亚硬拉（仅 7 次）偏少，自由重量大重量复合不足，绝对力量上限未充分开发。",
+      "advice": "加哑铃保加利亚分腿蹲与加重哑铃罗马尼亚硬拉，5×5 冲大重量；硬拉补足后链。",
       "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#10b981\" text-anchor=\"middle\">腿 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,75.9 224.1,150.0 150.0,245.0 55.0,150.0\" fill=\"#10b98122\" stroke=\"#10b981\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"75.9\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"224.1\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"150.0\" cy=\"245.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"55.0\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><text x=\"150.0\" y=\"67.9\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"224.1\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"150.0\" y=\"237.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"55.0\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 122 · 动作 40 种 · 组 1422</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 841,378kg · 最大 200kg（杠杆坐姿小腿屈伸）</text></svg>"
     },
     "背": {
@@ -349,5 +349,253 @@
       "advice": "增加硬拉/罗马尼亚硬拉的重量与频次强化后链；引体可加负重冲次数与力量。",
       "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#3b82f6\" text-anchor=\"middle\">背 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,72.1 231.7,150.0 150.0,238.3 83.5,150.0\" fill=\"#3b82f622\" stroke=\"#3b82f6\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"72.1\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"231.7\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"150.0\" cy=\"238.3\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"83.5\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><text x=\"150.0\" y=\"64.1\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">82</text><text x=\"231.7\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">86</text><text x=\"150.0\" y=\"230.3\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">93</text><text x=\"83.5\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">70</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 129 · 动作 44 种 · 组 1682</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 778,358kg · 最大 140kg（器械划船1）</text></svg>"
     }
+  },
+  "enhancement": {
+    "week_range": "2026-07-29 ~ 2026-08-04",
+    "generated": "2026-08-05",
+    "parts": {
+      "手臂": {
+        "color": "#6366f1",
+        "items": [
+          {
+            "action": "锤式弯举",
+            "last_w": 12.5,
+            "target_w": 15.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "平板哑铃臂屈伸（单）",
+            "last_w": 10.0,
+            "target_w": 12.5,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃弯举",
+            "last_w": 0,
+            "target_w": 12.5,
+            "sets": 4,
+            "reps": "10",
+            "is_new": true,
+            "note": "新增·哑铃"
+          }
+        ]
+      },
+      "胸": {
+        "color": "#ef4444",
+        "items": [
+          {
+            "action": "悍马机卧推",
+            "last_w": 82.0,
+            "target_w": 85.0,
+            "sets": 7,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "上斜器械推胸",
+            "last_w": 64.0,
+            "target_w": 67.5,
+            "sets": 6,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃飞鸟",
+            "last_w": 17.5,
+            "target_w": 20.0,
+            "sets": 5,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃平板卧推",
+            "last_w": 0,
+            "target_w": 25,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": true,
+            "note": "新增·哑铃"
+          }
+        ]
+      },
+      "肩膀": {
+        "color": "#f59e0b",
+        "items": [
+          {
+            "action": "器械坐姿推举",
+            "last_w": 50.0,
+            "target_w": 52.5,
+            "sets": 7,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃耸肩",
+            "last_w": 22.5,
+            "target_w": 25.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃直立划船",
+            "last_w": 17.5,
+            "target_w": 20.0,
+            "sets": 5,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "坐姿哑铃侧平举",
+            "last_w": 12.5,
+            "target_w": 15.0,
+            "sets": 5,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃上斜俯身侧平举",
+            "last_w": 12.5,
+            "target_w": 15.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "平板哑铃提拉",
+            "last_w": 12.5,
+            "target_w": 15.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "前平举",
+            "last_w": 7.5,
+            "target_w": 10.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          }
+        ]
+      },
+      "腿": {
+        "color": "#10b981",
+        "items": [
+          {
+            "action": "哑铃直腿硬拉",
+            "last_w": 22.5,
+            "target_w": 25.0,
+            "sets": 5,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃深蹲",
+            "last_w": 20.0,
+            "target_w": 22.5,
+            "sets": 5,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃箭步蹲",
+            "last_w": 15.0,
+            "target_w": 17.5,
+            "sets": 5,
+            "reps": "10/腿",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃臀推",
+            "last_w": 0,
+            "target_w": 25,
+            "sets": 4,
+            "reps": "12",
+            "is_new": true,
+            "note": "新增·哑铃"
+          },
+          {
+            "action": "哑铃俯卧腿弯举",
+            "last_w": 0,
+            "target_w": 12,
+            "sets": 4,
+            "reps": "12",
+            "is_new": true,
+            "note": "新增·哑铃"
+          },
+          {
+            "action": "哑铃站姿提踵",
+            "last_w": 0,
+            "target_w": 10,
+            "sets": 4,
+            "reps": "15",
+            "is_new": true,
+            "note": "新增·哑铃"
+          }
+        ]
+      },
+      "背": {
+        "color": "#3b82f6",
+        "items": [
+          {
+            "action": "器械划船2",
+            "last_w": 64.0,
+            "target_w": 67.5,
+            "sets": 6,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "器械划船1",
+            "last_w": 55.0,
+            "target_w": 57.5,
+            "sets": 6,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "俯卧哑铃划船（锤式）",
+            "last_w": 25.0,
+            "target_w": 27.5,
+            "sets": 6,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "哑铃硬拉",
+            "last_w": 0,
+            "target_w": 30,
+            "sets": 4,
+            "reps": "8",
+            "is_new": true,
+            "note": "新增·哑铃"
+          }
+        ]
+      }
+    },
+    "tip": "本周重点：手臂（上周仅 3 个动作）。沿用上周器械加重、加组；缺口以小肌群哑铃动作补足，动作数明显提升，单次时长建议 +10~15 分钟。"
   }
 }

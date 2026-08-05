@@ -242,6 +242,18 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .xunji-head .hint { font-size: 12px; }
 .xunji-head .spacer { flex: 1; }
 .xunji-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.xunji-plan { margin-top: 14px; background:#f9fafb; border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.xunji-plan-head { font-weight:800; font-size:15px; margin-bottom:8px; }
+.xunji-plan-sec { margin-bottom:10px; }
+.xunji-plan-sec-h { font-weight:800; font-size:14px; margin-bottom:4px; }
+.xunji-plan-row { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:13px; border-bottom:1px dashed #eee; }
+.xunji-plan-row:last-child { border-bottom:0; }
+.xunji-pa { flex:1; min-width:0; }
+.xunji-pw { color:var(--muted); white-space:nowrap; }
+.xunji-pw b { color:var(--text); }
+.xunji-pr { color:var(--subtle); font-size:12px; white-space:nowrap; }
+.xunji-new { background:#ecfdf5; color:#059669; font-size:11px; font-weight:700; padding:1px 6px; border-radius:8px; white-space:nowrap; }
+.xunji-plan-tip { margin-top:6px; font-size:12px; color:var(--muted); background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 10px; line-height:1.5; }
 .xunji-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
 .xunji-card-img { padding: 8px 8px 0; background: #fafafa; }
 .xunji-card-img svg { display: block; max-width: 300px; margin: 0 auto; }
@@ -645,6 +657,7 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
       <div id="xunji-cards" class="xunji-cards">
         <div class="xunji-loading">正在加载训记评价…</div>
       </div>
+      <div id="xunji-plan" class="xunji-plan"></div>
     </div>
   </section>
 
@@ -1390,11 +1403,40 @@ function renderXunjiEval() {
           </div>
         </div>`;
       }).join('');
+      const planBox = $('#xunji-plan');
+      if (planBox && d.enhancement) planBox.innerHTML = renderXunjiPlan(d.enhancement);
     })
     .catch(err => {
       box.innerHTML = `<div class="xunji-loading">暂无可加载的训记评价（${escapeHTML(err.message)}）。<br>部署后打开本页即可自动加载。</div>`;
     });
 }
+
+function renderXunjiPlan(e) {
+  const ORDER = ['手臂', '胸', '肩膀', '腿', '背'];
+  const parts = e.parts || {};
+  const secs = ORDER.filter(p => parts[p]).map(p => {
+    const info = parts[p];
+    const rows = info.items.map(it => {
+      const w = (it.last_w > 0 && it.target_w > 0)
+        ? `${fmtW(it.last_w)}→<b>${fmtW(it.target_w)}</b>kg`
+        : (it.target_w > 0 ? `新增 <b>${fmtW(it.target_w)}</b>kg` : '自重');
+      const tag = it.is_new ? '<span class="xunji-new">新·哑铃</span>' : '';
+      return `<div class="xunji-plan-row">
+        <span class="xunji-pa">${escapeHTML(it.action)}</span>
+        <span class="xunji-pw">${w}</span>
+        <span class="xunji-pr">${it.sets}组×${it.reps}</span>
+        ${tag}
+      </div>`;
+    }).join('');
+    return `<div class="xunji-plan-sec">
+      <div class="xunji-plan-sec-h" style="color:${info.color}">${p}</div>
+      ${rows}
+    </div>`;
+  }).join('');
+  const tip = e.tip ? `<div class="xunji-plan-tip">${escapeHTML(e.tip)}</div>` : '';
+  return `<div class="xunji-plan-head">本周增强建议 <span class="hint">${escapeHTML(e.week_range || '')}</span></div>${secs}${tip}`;
+}
+function fmtW(w) { return (w % 1 === 0) ? String(w) : String(Math.round(w * 10) / 10); }
 
 // ---------- 资讯 ----------
 function renderNews() {
