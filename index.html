@@ -235,6 +235,26 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .fit-photo { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; cursor: zoom-in; border: 1px solid var(--border); }
 .fit-photo:hover { opacity: .92; }
 
+/* 训记多维评价 */
+.xunji-eval { margin-top: 16px; }
+.xunji-head { display: flex; align-items: center; gap: 8px; margin: 6px 2px 12px; flex-wrap: wrap; }
+.xunji-title { font-weight: 700; font-size: 15px; }
+.xunji-head .hint { font-size: 12px; }
+.xunji-head .spacer { flex: 1; }
+.xunji-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.xunji-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.xunji-card-img { padding: 8px 8px 0; background: #fafafa; }
+.xunji-card-img svg { display: block; max-width: 300px; margin: 0 auto; }
+.xunji-card-body { padding: 12px 14px 14px; }
+.xunji-card-title { font-weight: 800; font-size: 16px; margin-bottom: 8px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.xunji-sub { font-weight: 500; font-size: 12px; color: var(--muted); }
+.xunji-tag { font-size: 13px; line-height: 1.6; color: var(--text); margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #f8fafc; border-left: 3px solid var(--border); }
+.xunji-tag b { margin-right: 4px; }
+.xunji-tag.s { border-left-color: #10b981; background: #ecfdf5; }
+.xunji-tag.w { border-left-color: #ef4444; background: #fef2f2; }
+.xunji-tag.a { border-left-color: #3b82f6; background: #eff6ff; }
+.xunji-loading { color: var(--subtle); font-size: 13px; padding: 24px 8px; text-align: center; line-height: 1.7; }
+
 /* 资讯 */
 .news-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
 .news-item:last-child { border-bottom: 0; }
@@ -614,6 +634,18 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
     </div>
     <div class="card"><div id="fit-stats"></div></div>
     <div id="fit-list"></div>
+
+    <!-- 训记多维评价（运行时加载 xunji_eval.json） -->
+    <div class="xunji-eval" id="xunji-eval">
+      <div class="xunji-head">
+        <span class="xunji-title">训记 · 多维训练评价</span>
+        <span class="hint" id="xunji-meta"></span>
+        <button class="btn ghost sm" id="xunji-refresh" title="重新拉取最新评价">刷新</button>
+      </div>
+      <div id="xunji-cards" class="xunji-cards">
+        <div class="xunji-loading">正在加载训记评价…</div>
+      </div>
+    </div>
   </section>
 
   <!-- 资讯 -->
@@ -1332,6 +1364,38 @@ function renderFitness() {
   };
 }
 
+function renderXunjiEval() {
+  const box = $('#xunji-cards'); if (!box) return;
+  const meta = $('#xunji-meta');
+  if (typeof fetch !== 'function') {
+    box.innerHTML = `<div class="xunji-loading">当前环境不支持自动加载（请用现代浏览器打开部署页）。</div>`;
+    return;
+  }
+  box.innerHTML = `<div class="xunji-loading">正在加载训记评价…</div>`;
+  fetch('xunji_eval.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(d => {
+      if (meta) meta.textContent = `数据区间 ${d.range[0]} ~ ${d.range[1]} · 训练日 ${d.train_days}`;
+      const ORDER = ['手臂', '胸', '肩膀', '腿', '背'];
+      box.innerHTML = ORDER.map(p => {
+        const it = d.parts[p]; if (!it) return '';
+        const m = it.metrics;
+        return `<div class="xunji-card" style="border-top:3px solid ${it.color}">
+          <div class="xunji-card-img">${it.svg}</div>
+          <div class="xunji-card-body">
+            <div class="xunji-card-title">${p}<span class="xunji-sub">训练日 ${m.days} · 动作 ${m.distinct} 种 · 组 ${m.sets}</span></div>
+            <div class="xunji-tag s"><b>优势</b>${escapeHTML(it.strength)}</div>
+            <div class="xunji-tag w"><b>劣势</b>${escapeHTML(it.weakness)}</div>
+            <div class="xunji-tag a"><b>建议</b>${escapeHTML(it.advice)}</div>
+          </div>
+        </div>`;
+      }).join('');
+    })
+    .catch(err => {
+      box.innerHTML = `<div class="xunji-loading">暂无可加载的训记评价（${escapeHTML(err.message)}）。<br>部署后打开本页即可自动加载。</div>`;
+    });
+}
+
 // ---------- 资讯 ----------
 function renderNews() {
   const root = $('#news-list'); if (!root) return;
@@ -1776,7 +1840,7 @@ function render(tab) {
   if (tab === 'today' || !tab) renderToday();
   if (tab === 'review' || !tab) renderReview();
   if (tab === 'note' || !tab) renderNotes();
-  if (tab === 'fitness' || !tab) renderFitness();
+  if (tab === 'fitness' || !tab) { renderFitness(); renderXunjiEval(); }
   if (tab === 'news' || !tab) { renderNewsSources(); renderNews(); }
 }
 
@@ -1844,6 +1908,7 @@ function bindModuleActions() {
 
 
   $('#fit-save')?.addEventListener('click', saveCheckIn);
+  $('#xunji-refresh')?.addEventListener('click', renderXunjiEval);
   initFitCompose();
 
   $('#news-import')?.addEventListener('click', openNewsImport);
