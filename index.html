@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="小台工作台" />
-<meta name="description" content="工作复盘、轻记录、书单、资讯速览，离线可用的本地化个人效率工作台。" />
+<meta name="description" content="工作复盘、轻记录、健身打卡、资讯速览，离线可用的本地化个人效率工作台。" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
@@ -220,22 +220,20 @@ label { font-size: 13px; color: var(--muted); display:block; margin-bottom: 5px;
 .note-item .x:hover { color: var(--danger); }
 
 
-/* 书单 */
-.book-item { display:flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-.book-item:last-child { border-bottom: 0; }
-.book-item .cover {
-  width: 48px; height: 64px; border-radius: 6px; flex-shrink: 0;
-  display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px;
-  text-align: center; padding: 4px; line-height: 1.1;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-}
-.book-item .info { flex: 1; min-width: 0; }
-.book-item .info .t { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-.book-item .info .a { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-.book-item .info .p { display:flex; gap: 8px; align-items: center; }
-.book-item .info .p .bar { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
-.book-item .info .p .bar > span { display: block; height: 100%; background: var(--primary); }
-.book-item .info .p .pt { font-size: 12px; color: var(--muted); }
+/* 健身打卡 */
+.fit-compose { padding: 14px; }
+.fit-compose textarea { width: 100%; resize: vertical; }
+.fit-photos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.fit-photos:empty { margin-top: 0; }
+.fit-thumb { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+.fit-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fit-thumb-x { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border: 0; border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; font-size: 14px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.fit-thumb-x:hover { background: rgba(0,0,0,.75); }
+.fit-item-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.fit-item-head .date { font-weight: 600; font-size: 14px; }
+.fit-note { font-size: 14px; color: var(--text); line-height: 1.55; white-space: pre-wrap; word-break: break-word; margin-bottom: 8px; }
+.fit-photo { width: 84px; height: 84px; object-fit: cover; border-radius: 8px; cursor: zoom-in; border: 1px solid var(--border); }
+.fit-photo:hover { opacity: .92; }
 
 /* 资讯 */
 .news-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -405,8 +403,7 @@ hr.sep { border: 0; border-top: 1px dashed var(--border); margin: 14px 0; }
 }
 .note-row .x:hover { color: var(--danger); }
 
-/* 书单统计卡（沿用轻记录配色体系） */
-.lib-stats-card { padding: 12px 14px 14px; }
+/* 统计卡配色（健身沿用） */
 .note-stat.s-reading { background: var(--pending-soft); } .note-stat.s-reading .num { color: var(--pending); }
 .note-stat.s-wish    { background: var(--warm-soft); }    .note-stat.s-wish .num { color: var(--warm-deep); }
 .note-stat.s-done    { background: #DCFCE7; }             .note-stat.s-done .num { color: #16a34a; }
@@ -453,18 +450,6 @@ svg.chart { display:block; max-width: 100%; }
 .src-card .nm { font-weight:600; font-size:14px; display:flex; align-items:center; gap:6px; }
 .src-card .nm svg { width:16px; height:16px; color:var(--primary); flex-shrink:0; }
 .src-card .ds { font-size:12px; color:var(--muted); }
-
-/* AI 讨论 */
-.ai-settings { background:#f9fafb; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:10px; }
-.ai-settings .hint { margin-top:4px; display:block; }
-.ai-settings .grid-3 { gap:8px; }
-.ai-msgs { max-height:340px; overflow:auto; display:flex; flex-direction:column; gap:8px; padding:8px 0; }
-.ai-msg { padding:9px 12px; border-radius:10px; font-size:14px; line-height:1.55; white-space:pre-wrap; word-break:break-word; }
-.ai-msg.user { background:var(--primary-soft); color:var(--primary-deep); align-self:flex-end; max-width:90%; }
-.ai-msg.assistant { background:#f3f4f6; color:var(--text); align-self:flex-start; max-width:92%; }
-.ai-msg.thinking { color:var(--subtle); font-style:italic; align-self:flex-start; }
-.ai-msg.err { background:#fef2f2; color:var(--danger); align-self:flex-start; }
-.ai-empty { color:var(--subtle); font-size:13px; text-align:center; padding:14px 0; }
 
 /* 周报 */
 .report-area { width:100%; min-height:360px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; line-height:1.6; }
@@ -602,49 +587,31 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
   </section>
 
 
-  <!-- 书单 -->
-  <section class="view" id="view-library">
-    <div class="toolbar">
-      <button class="btn primary" id="book-add">+ 添加一本书</button>
-    </div>
-    <div class="card lib-stats-card"><div id="book-stats"></div></div>
-    <div class="card note-tabs-card">
-      <div class="note-tabs-head">
-        <span class="title">${iconBook2()} 书架</span>
-        <div class="note-filter" id="book-filter">
-          <button data-f="all" class="active">全部</button>
-          <button data-f="reading">在读</button>
-          <button data-f="wish">想读</button>
-          <button data-f="done">读完</button>
+  <!-- 健身打卡 -->
+  <section class="view" id="view-fitness">
+    <div class="card fit-compose">
+      <div class="row" style="gap:10px;align-items:flex-end">
+        <div style="flex:1;min-width:0">
+          <label style="display:block;margin-bottom:4px;color:var(--muted);font-size:13px">日期</label>
+          <input type="date" id="fit-date" />
+        </div>
+        <div style="flex:1;min-width:0">
+          <label style="display:block;margin-bottom:4px;color:var(--muted);font-size:13px">部位 / 类型</label>
+          <input type="text" id="fit-part" placeholder="如：练肩 / 有氧" />
         </div>
       </div>
-      <div id="book-list"></div>
-    </div>
-    <div class="card" id="ai-card">
-      <h2>读书 AI 讨论 <span class="hint">填自己的 Key，纯本地调用</span></h2>
-      <div class="ai-settings">
-        <div class="hint" style="margin-bottom:6px">配置一次即可，Key 仅存你本机浏览器，不上传任何服务器。</div>
-        <div class="grid grid-3">
-          <div><label>API Key</label><input type="password" id="ai-key" placeholder="sk-..." autocomplete="off" /></div>
-          <div><label>接口 Base URL</label><input type="text" id="ai-base" placeholder="https://api.deepseek.com/v1" /></div>
-          <div><label>模型</label><input type="text" id="ai-model" placeholder="deepseek-chat" /></div>
-        </div>
-        <div class="hint" style="margin-top:6px">支持 OpenAI / DeepSeek 等 OpenAI 兼容接口。若浏览器提示跨域(CORS)被拦截，可把 Base URL 换成支持 CORS 的代理地址。</div>
-        <div class="row" style="margin-top:8px;justify-content:flex-end">
-          <button class="btn sm primary" id="ai-save-cfg">保存配置</button>
-        </div>
-      </div>
-      <div class="row" style="margin-bottom:10px">
-        <label style="margin:0">讨论书目</label>
-        <select id="ai-book" style="flex:1;min-width:0"></select>
-        <button class="btn sm ghost" id="ai-clear-chat">清空对话</button>
-      </div>
-      <div class="ai-msgs" id="ai-msgs"><div class="ai-empty">选一本书，开始和 AI 聊聊书中的观点 💬</div></div>
-      <div class="row" style="margin-top:8px;gap:8px">
-        <textarea id="ai-input" placeholder="输入你想讨论的问题，例如：这本书的核心方法论是什么？" style="flex:1;min-height:44px"></textarea>
-        <button class="btn primary" id="ai-send">发送</button>
+      <textarea id="fit-note" rows="2" placeholder="今天练了什么？状态、重量、感受…（选填）" style="margin-top:10px"></textarea>
+      <div id="fit-photos" class="fit-photos"></div>
+      <div class="row" style="margin-top:10px;gap:8px;align-items:center">
+        <label class="btn" for="fit-file">📷 拍照 / 添加照片</label>
+        <input type="file" id="fit-file" accept="image/*" multiple capture="environment" style="display:none" />
+        <span class="hint" id="fit-photo-hint">最多 9 张，自动压缩</span>
+        <span class="spacer"></span>
+        <button class="btn primary" id="fit-save">保存打卡</button>
       </div>
     </div>
+    <div class="card"><div id="fit-stats"></div></div>
+    <div id="fit-list"></div>
   </section>
 
   <!-- 资讯 -->
@@ -704,10 +671,9 @@ const store = {
 const Schema = {
   reviews: [],   // {id, date, done, problem, achievement, tags:[]}
   notes: [],     // {id, ts, content, category:'工作'|'生活'|'学习'|'其他', status:'done'|'pending', doneAt?, pendingNextDate?}
-  books: [],     // {id, title, author, total, current, status:'reading'|'done'|'wish', quote, addedAt}
+  fitness: [],   // {id, date, part, note, photos:[{id, data}]}
   news: [],      // {id, date, category, source, title, summary, url, ts}
   newsNotes: '', // 自填速览手记（纯本地）
-  aiSettings: { key:'', base:'https://api.deepseek.com/v1', model:'deepseek-chat' },
   settings: { onboarded: false }
 };
 
@@ -746,9 +712,9 @@ function seedSample() {
     { id: uid(), ts: Date.now() - 600*1000, content: '追踪客户 K23 第二批试产排期并同步给研发', category: '工作', status: 'pending', pendingNextDate: todayStr() },
     { id: uid(), ts: Date.now() - 3600*1000*6, content: '整理热门阅读书签', category: '学习', status: 'pending', pendingNextDate: daysAgo(1) }
   ];
-  Schema.books = [
-    { id: uid(), title: '项目管理之美', author: 'Scott Berkun', total: 220, current: 88, status: 'reading', quote: '"衡量一个项目是否成功，要看它是否解决了最初要解决的问题。"', addedAt: daysAgo(20) },
-    { id: uid(), title: '深度工作', author: 'Cal Newport', total: 280, current: 0, status: 'wish', quote: '', addedAt: daysAgo(5) }
+  Schema.fitness = [
+    { id: uid(), date: todayStr(), part: '肩 + 有氧', note: '今日练肩 + 有氧 30 分钟，状态不错，拍照留念。', photos: [] },
+    { id: uid(), date: daysAgo(2), part: '腿', note: '练腿，深蹲加量到 60kg，酸痛但充实。', photos: [] }
   ];
   Schema.settings.onboarded = true;
   saveAll();
@@ -759,7 +725,7 @@ const TABS = [
   { id: 'today',    label: '今天',   icon: iconBell() },
   { id: 'review',   label: '复盘',   icon: iconBook() },
   { id: 'note',     label: '轻记录', icon: iconEdit() },
-  { id: 'library',  label: '书单',   icon: iconBook2() },
+  { id: 'fitness',  label: '健身',   icon: iconDumbbell() },
   { id: 'news',     label: '资讯',   icon: iconNews() }
 ];
 let currentTab = 'today';
@@ -812,8 +778,12 @@ function renderToday() {
     items.push({ key:'notes-today', label: `${todayNotes.length} 条轻记录待办今天要处理`, meta: '', overdue: false, action: '查看', cb: () => { noteFilter.filter = '待办'; switchTab('note'); } });
   }
 
+  // 健身：今天还没打卡，给个温柔提醒（非逾期）
+  if (!Schema.fitness.some(f => f.date === t)) {
+    items.push({ key:'fit-today', label: '今天还没健身打卡', meta: '健完身来拍张照 📷', overdue: false, action: '去打卡', cb: () => switchTab('fitness') });
+  }
 
-  const totalItems = Schema.reviews.length + Schema.notes.length + Schema.books.length;
+  const totalItems = Schema.reviews.length + Schema.notes.length + Schema.fitness.length;
   if (totalItems >= 30) {
     items.push({ key:'backup', label: `数据已积累 ${totalItems} 条`, meta: '建议导出备份', overdue: false, action: '导出', cb: exportAll });
   }
@@ -1211,192 +1181,150 @@ function fmtHM(d) {
 }
 
 
-// ---------- 书单 ----------
-let libFilter = 'all';
-function dayLabel(d) {
-  if (d === todayStr()) return '今天';
-  if (d === daysAgo(1)) return '昨天';
-  return d;
+
+// ---------- 健身打卡 ----------
+
+// ---------- 健身打卡 ----------
+
+// 当前草稿照片（未保存）
+let fitDraft = [];
+
+function initFitCompose() {
+  const d = $('#fit-date'); if (d) d.value = todayStr();
+  const f = $('#fit-file');
+  if (f) f.onchange = () => {
+    const files = Array.from(f.files || []);
+    const room = 9 - fitDraft.length;
+    if (room <= 0) { toast('最多 9 张照片', 'warn'); f.value = ''; return; }
+    const picked = files.slice(0, room);
+    if (!picked.length) { f.value = ''; return; }
+    let done = 0;
+    picked.forEach(file => {
+      compressImage(file, 800, 0.82).then(dataUrl => {
+        fitDraft.push({ id: uid(), data: dataUrl });
+      }).catch(() => {}).finally(() => {
+        done++;
+        if (done === picked.length) { renderFitDraft(); f.value = ''; }
+      });
+    });
+  };
+  renderFitDraft();
 }
-function bookItemHTML(b) {
-  const pct = b.total ? Math.min(100, Math.round((b.current||0) / b.total * 100)) : 0;
-  const statusLabel = { reading: '在读', wish: '想读', done: '读完' }[b.status];
-  const coverColor = pickColor(b.title);
-  return `
-    <div class="book-item">
-      <div class="cover" style="background:${coverColor}">${escapeHTML(b.title.slice(0,2))}</div>
-      <div class="info">
-        <div class="t">${escapeHTML(b.title)} <span class="hint" style="font-weight:normal">· ${statusLabel}</span></div>
-        <div class="a">${escapeHTML(b.author || '佚名')}</div>
-        <div class="p">
-          <div class="bar"><span style="width:${pct}%"></span></div>
-          <span class="pt">${b.current||0}/${b.total||'?'} 页 · ${pct}%</span>
-        </div>
-        ${b.quote ? `<div style="margin-top:6px;font-size:12px;color:var(--muted);font-style:italic;border-left:3px solid var(--border);padding-left:8px">${escapeHTML(b.quote)}</div>` : ''}
-        <div class="row" style="margin-top:8px;gap:6px">
-          ${b.status === 'reading' ? `<button class="btn sm" data-act="prog" data-id="${b.id}">+ 进度</button>` : ''}
-          ${b.status === 'wish' ? `<button class="btn sm" data-act="start" data-id="${b.id}">开始读</button>` : ''}
-          ${b.status === 'reading' ? `<button class="btn sm" data-act="done" data-id="${b.id}">标记读完</button>` : ''}
-          ${b.status === 'done' ? `<button class="btn sm" data-act="redo" data-id="${b.id}">重新读</button>` : ''}
-          <button class="btn sm" data-act="quote" data-id="${b.id}">编辑摘录</button>
-          <button class="btn sm danger" data-act="del" data-id="${b.id}">${iconX()}</button>
-        </div>
-      </div>
-    </div>
-  `;
+
+function compressImage(file, maxW, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        try { resolve(canvas.toDataURL('image/jpeg', quality)); }
+        catch (e) { reject(e); }
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
-function renderLibrary() {
-  const root = $('#book-list'); if (!root) return;
-  const all = Schema.books;
-  // 统计卡
-  $('#book-stats').innerHTML = `
+
+function renderFitDraft() {
+  const box = $('#fit-photos'); if (!box) return;
+  box.innerHTML = fitDraft.map(p => `
+    <div class="fit-thumb">
+      <img src="${p.data}" alt="打卡照片草稿" />
+      <button class="fit-thumb-x" data-id="${p.id}" title="移除">×</button>
+    </div>`).join('');
+  const hint = $('#fit-photo-hint'); if (hint) hint.textContent = `已选 ${fitDraft.length}/9 张，自动压缩`;
+  box.onclick = e => {
+    const b = e.target.closest('button[data-id]'); if (!b) return;
+    fitDraft = fitDraft.filter(x => x.id !== b.dataset.id);
+    renderFitDraft();
+  };
+}
+
+function saveCheckIn() {
+  const date = ($('#fit-date')?.value || todayStr());
+  const part = ($('#fit-part')?.value || '').trim();
+  const note = ($('#fit-note')?.value || '').trim();
+  if (!note && !part && !fitDraft.length) { toast('写点什么或加张照片吧', 'warn'); return; }
+  Schema.fitness.unshift({ id: uid(), date, part, note, photos: fitDraft.slice() });
+  save('fitness');
+  fitDraft = [];
+  if ($('#fit-part')) $('#fit-part').value = '';
+  if ($('#fit-note')) $('#fit-note').value = '';
+  if ($('#fit-date')) $('#fit-date').value = todayStr();
+  renderFitDraft(); renderFitness(); renderToday();
+  toast('打卡已保存');
+}
+
+function inThisWeek(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = (d.getDay() + 6) % 7; // 周一=0
+  const monday = new Date(d); monday.setDate(d.getDate() - day);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 7);
+  return d >= monday && d < sunday;
+}
+
+function prevDate(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() - n);
+  return d.toISOString().slice(0, 10);
+}
+
+function renderFitness() {
+  const root = $('#fit-list'); if (!root) return;
+  const all = Schema.fitness;
+  const daySet = new Set(all.map(f => f.date));
+  const totalDays = daySet.size;
+  const weekCount = all.filter(f => inThisWeek(f.date)).length;
+  const totalPhotos = all.reduce((s, f) => s + (f.photos ? f.photos.length : 0), 0);
+  // 连续天数：今天有打卡从今天算，否则从昨天起算，给连续激励
+  let streak = 0;
+  let cursor = daySet.has(todayStr()) ? todayStr() : daysAgo(1);
+  while (daySet.has(cursor)) { streak++; cursor = prevDate(cursor, 1); }
+  $('#fit-stats').innerHTML = `
     <div class="note-stats">
-      <div class="note-stat s-reading"><span class="num">${all.filter(b=>b.status==='reading').length}</span><span class="lbl">在读</span></div>
-      <div class="note-stat s-wish"><span class="num">${all.filter(b=>b.status==='wish').length}</span><span class="lbl">想读</span></div>
-      <div class="note-stat s-done"><span class="num">${all.filter(b=>b.status==='done').length}</span><span class="lbl">读完</span></div>
-      <div class="note-stat s-total"><span class="num">${all.length}</span><span class="lbl">累计</span></div>
+      <div class="note-stat s-total"><span class="num">${totalDays}</span><span class="lbl">累计打卡</span></div>
+      <div class="note-stat s-reading"><span class="num">${weekCount}</span><span class="lbl">本周</span></div>
+      <div class="note-stat s-wish"><span class="num">${streak}</span><span class="lbl">连续天数</span></div>
+      <div class="note-stat s-done"><span class="num">${totalPhotos}</span><span class="lbl">累计照片</span></div>
     </div>`;
-  // 状态过滤
-  const list = (libFilter === 'all' ? all : all.filter(b => b.status === libFilter)).slice()
-    .sort((a,b) => (b.addedAt||'').localeCompare(a.addedAt||''));
-  if (!list.length) { root.innerHTML = `<div class="empty">这个分类下还没有书 📚</div>`; renderAIPanel(); return; }
-  // 按加入日期分组
-  const groups = {};
-  list.forEach(b => { const d = b.addedAt || '未知日期'; (groups[d] = groups[d] || []).push(b); });
-  const dates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
-  root.innerHTML = dates.map(d => {
-    const items = groups[d];
-    return `<div class="note-day"><div class="note-day-head"><span class="h">${dayLabel(d)}</span><span class="meta">${items.length} 本</span><span class="hr"></span></div>${items.map(bookItemHTML).join('')}</div>`;
-  }).join('');
+  if (!all.length) { root.innerHTML = `<div class="empty">还没有健身打卡，健完身来拍张照吧 📷</div>`; return; }
+  root.innerHTML = [...all].sort((a, b) => b.date.localeCompare(a.date)).map(f => `
+    <div class="card fit-item">
+      <div class="fit-item-head">
+        <span class="date">${escapeHTML(f.date)} ${f.date === todayStr() ? '<span class="day-tag">今日</span>' : (f.date === daysAgo(1) ? '<span class="day-tag">昨日</span>' : '')}</span>
+        ${f.part ? `<span class="tag">#${escapeHTML(f.part)}</span>` : ''}
+        <span class="spacer"></span>
+        <button class="btn sm danger" data-act="del" data-id="${f.id}">${iconX()}</button>
+      </div>
+      ${f.note ? `<div class="fit-note">${escapeHTML(f.note)}</div>` : ''}
+      ${f.photos && f.photos.length ? `<div class="fit-photos">${f.photos.map(p => `<img class="fit-photo" data-fid="${f.id}" data-pid="${p.id}" src="${p.data}" alt="打卡照片" />`).join('')}</div>` : ''}
+    </div>
+  `).join('');
   root.onclick = e => {
-    const b = e.target.closest('button[data-act]'); if (!b) return;
-    const id = b.dataset.id;
-    const book = Schema.books.find(x => x.id === id);
-    if (!book) return;
-    if (b.dataset.act === 'prog') {
-      const add = Number(prompt(`《${book.title}》当前 ${book.current}/${book.total} 页\n增加多少页？`, '20'));
-      if (add > 0) { book.current = Math.min(book.total, book.current + add); if (book.current >= book.total) book.status='done'; save('books'); renderLibrary(); renderToday(); }
+    const del = e.target.closest('button[data-act="del"]');
+    if (del) {
+      const id = del.dataset.id;
+      if (confirm('删除这条打卡记录？照片将一并删除。')) {
+        Schema.fitness = Schema.fitness.filter(x => x.id !== id);
+        save('fitness'); renderFitness(); renderToday();
+      }
+      return;
     }
-    if (b.dataset.act === 'start') { book.status='reading'; book.current = book.current || 1; save('books'); renderLibrary(); renderToday(); }
-    if (b.dataset.act === 'done') { book.status='done'; book.current = book.total; save('books'); renderLibrary(); }
-    if (b.dataset.act === 'redo') { book.status='reading'; save('books'); renderLibrary(); }
-    if (b.dataset.act === 'quote') {
-      const q = prompt('编辑摘录/笔记', book.quote || '');
-      if (q !== null) { book.quote = q; save('books'); renderLibrary(); }
-    }
-    if (b.dataset.act === 'del') {
-      if (confirm('从书单移除这本书？')) { Schema.books = Schema.books.filter(x => x.id !== id); save('books'); renderLibrary(); }
+    const img = e.target.closest('img.fit-photo');
+    if (img) {
+      const rec = Schema.fitness.find(x => x.id === img.dataset.fid);
+      const photo = rec && rec.photos.find(p => p.id === img.dataset.pid);
+      if (photo) showModal(`<img src="${photo.data}" style="width:100%;border-radius:10px;display:block" alt="打卡照片" />`);
     }
   };
-  renderAIPanel();
-}
-
-function pickColor(seed) {
-  const palette = ['#2563EB','#7c3aed','#db2777','#16a34a','#f59e0b','#0ea5e9','#ef4444','#14b8a6'];
-  let h = 0; for (let i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i)) >>> 0;
-  return palette[h % palette.length];
-}
-
-function openBookModal() {
-  showModal(`<h3>添加一本书</h3>
-    <div class="form-row"><label>书名</label><input type="text" id="bk-title" placeholder="如：项目管理之美" /></div>
-    <div class="form-row"><label>作者</label><input type="text" id="bk-author" placeholder="选填" /></div>
-    <div class="form-row"><label>总页数</label><input type="number" id="bk-total" min="1" placeholder="300" /></div>
-    <div class="form-row"><label>状态</label><select id="bk-status"><option value="reading">在读</option><option value="wish">想读</option><option value="done">读完</option></select></div>
-    <div class="actions">
-      <button class="btn ghost" data-act="cancel">取消</button>
-      <button class="btn primary" data-act="save">添加</button>
-    </div>
-  `, {
-    onMount: (root) => {
-      root.querySelector('[data-act="cancel"]').onclick = closeModal;
-      root.querySelector('[data-act="save"]').onclick = () => {
-        const title = root.querySelector('#bk-title').value.trim();
-        if (!title) { toast('书名不能为空', 'warn'); return; }
-        Schema.books.unshift({
-          id: uid(), title, author: root.querySelector('#bk-author').value.trim(),
-          total: Number(root.querySelector('#bk-total').value) || 0,
-          current: 0, status: root.querySelector('#bk-status').value,
-          quote: '', addedAt: todayStr()
-        });
-        save('books'); closeModal(); renderLibrary(); renderToday();
-        toast('已加入书单');
-      };
-    }
-  });
-}
-
-// ---------- 书单 AI 讨论 ----------
-let aiBookId = '';
-function renderAIPanel() {
-  const sel = $('#ai-book'); if (!sel) return;
-  $('#ai-key').value = Schema.aiSettings.key || '';
-  $('#ai-base').value = Schema.aiSettings.base || 'https://api.deepseek.com/v1';
-  $('#ai-model').value = Schema.aiSettings.model || 'deepseek-chat';
-
-  const books = Schema.books;
-  const cur = (aiBookId && books.find(b => b.id === aiBookId)) ? aiBookId : (books[0] ? books[0].id : '');
-  aiBookId = cur;
-  sel.innerHTML = books.length
-    ? books.map(b => `<option value="${b.id}">${escapeHTML(b.title)}</option>`).join('')
-    : '<option value="">（书架空空，先加一本书）</option>';
-  sel.value = cur;
-  renderAIMessages();
-}
-
-function renderAIMessages() {
-  const box = $('#ai-msgs'); if (!box) return;
-  const book = Schema.books.find(b => b.id === aiBookId);
-  const chat = (book && book.aiChat) || [];
-  if (!chat.length) { box.innerHTML = '<div class="ai-empty">选一本书，开始和 AI 聊聊书中的观点 💬</div>'; return; }
-  box.innerHTML = chat.map(m => `<div class="ai-msg ${m.role === 'user' ? 'user' : 'assistant'}${m.thinking ? ' thinking' : ''}${String(m.content).startsWith('调用失败') ? ' err' : ''}">${escapeHTML(m.content)}</div>`).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
-async function aiSend() {
-  const book = Schema.books.find(b => b.id === aiBookId);
-  if (!book) { toast('请先选一本书', 'warn'); return; }
-  if (!Schema.aiSettings.key) { toast('请先在上方填写 API Key 并保存', 'warn'); return; }
-  const input = $('#ai-input');
-  const text = (input.value || '').trim();
-  if (!text) return;
-  input.value = '';
-  book.aiChat = book.aiChat || [];
-  book.aiChat.push({ role: 'user', content: text });
-  book.aiChat.push({ role: 'assistant', content: '思考中…', thinking: true });
-  save('books'); renderAIMessages();
-
-  const sys = { role: 'system', content: `你是一个读书讨论助手，正在和用户聊《${book.title}》${book.author ? `（作者：${book.author}）` : ''}这本书。请围绕书中的观点、方法论、人物或情节展开讨论，也可联系现实，但必须基于书中内容。用中文回答，简洁有洞察，不超过 300 字。` };
-  const apiMessages = [sys, ...book.aiChat.filter(m => !m.thinking).map(m => ({ role: m.role, content: m.content }))];
-
-  try {
-    const reply = await aiChat(apiMessages);
-    book.aiChat = book.aiChat.filter(m => !m.thinking);
-    book.aiChat.push({ role: 'assistant', content: reply });
-    save('books'); renderAIMessages();
-  } catch (err) {
-    book.aiChat = book.aiChat.filter(m => !m.thinking);
-    book.aiChat.push({ role: 'assistant', content: '调用失败：' + err.message });
-    save('books'); renderAIMessages();
-  }
-}
-
-async function aiChat(messages) {
-  const cfg = Schema.aiSettings;
-  const base = (cfg.base || 'https://api.deepseek.com/v1').replace(/\/$/, '');
-  const url = base + '/chat/completions';
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key },
-    body: JSON.stringify({ model: cfg.model || 'deepseek-chat', messages, temperature: 0.7, stream: false })
-  });
-  if (!resp.ok) {
-    let detail = '';
-    try { detail = (await resp.json())?.error?.message || ''; } catch {}
-    throw new Error('HTTP ' + resp.status + (detail ? ' · ' + detail : ''));
-  }
-  const data = await resp.json();
-  return (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '(空响应)';
 }
 
 // ---------- 资讯 ----------
@@ -1780,8 +1708,7 @@ function clearAll() {
         store.clearAll();
         Object.assign(Schema, {
           reviews: [], notes: [],
-          books: [], news: [], newsNotes: '',
-          aiSettings: { key:'', base:'https://api.deepseek.com/v1', model:'deepseek-chat' },
+          fitness: [], news: [], newsNotes: '',
           settings: { onboarded: false }
         });
         saveAll(); closeModal(); renderAll();
@@ -1827,6 +1754,7 @@ function iconBook() { return svg('<path d="M4 4a2 2 0 012-2h12v18H6a2 2 0 01-2-2
 function iconEdit() { return svg('<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/>'); }
 function iconBook2() { return svg('<path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>'); }
 function iconNews() { return svg('<path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>'); }
+function iconDumbbell() { return svg('<path d="M6.5 6.5l11 11"/><path d="M21 21l-1.5-1.5"/><path d="M3 3l1.5 1.5"/><rect x="12.5" y="12.5" width="3" height="3" rx="1" transform="rotate(45 14 14)"/><path d="M19.5 10.5a2 2 0 010 2.83l-1.17 1.17a2 2 0 01-2.83 0"/><path d="M4.5 13.5a2 2 0 010-2.83l1.17-1.17a2 2 0 012.83 0"/>'); }
 function iconLink() { return svg('<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>'); }
 function iconCheck() { return svg('<path d="M20 6L9 17l-5-5"/>'); }
 function iconWarn() { return svg('<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/>'); }
@@ -1843,7 +1771,7 @@ function render(tab) {
   if (tab === 'today' || !tab) renderToday();
   if (tab === 'review' || !tab) renderReview();
   if (tab === 'note' || !tab) renderNotes();
-  if (tab === 'library' || !tab) renderLibrary();
+  if (tab === 'fitness' || !tab) renderFitness();
   if (tab === 'news' || !tab) { renderNewsSources(); renderNews(); }
 }
 
@@ -1910,13 +1838,8 @@ function bindModuleActions() {
   });
 
 
-  $('#book-add')?.addEventListener('click', openBookModal);
-  $('#book-filter')?.addEventListener('click', e => {
-    const btn = e.target.closest('button[data-f]'); if (!btn) return;
-    libFilter = btn.dataset.f;
-    [...$('#book-filter').children].forEach(c => c.classList.toggle('active', c === btn));
-    renderLibrary();
-  });
+  $('#fit-save')?.addEventListener('click', saveCheckIn);
+  initFitCompose();
 
   $('#news-import')?.addEventListener('click', openNewsImport);
   $('#news-note-save')?.addEventListener('click', () => {
@@ -1926,25 +1849,6 @@ function bindModuleActions() {
   $('#news-clear')?.addEventListener('click', () => {
     if (!Schema.news.length) { toast('暂无资讯', 'warn'); return; }
     if (confirm(`清空全部 ${Schema.news.length} 条资讯？`)) { Schema.news = []; save('news'); renderNews(); toast('已清空'); }
-  });
-
-  $('#ai-save-cfg')?.addEventListener('click', () => {
-    Schema.aiSettings = {
-      key: ($('#ai-key')?.value || '').trim(),
-      base: ($('#ai-base')?.value || '').trim() || 'https://api.deepseek.com/v1',
-      model: ($('#ai-model')?.value || '').trim() || 'deepseek-chat'
-    };
-    save('aiSettings'); toast('AI 配置已保存（仅存本机）');
-  });
-  $('#ai-book')?.addEventListener('change', e => { aiBookId = e.target.value; renderAIMessages(); });
-  $('#ai-send')?.addEventListener('click', aiSend);
-  $('#ai-input')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); aiSend(); }
-  });
-  $('#ai-clear-chat')?.addEventListener('click', () => {
-    const book = Schema.books.find(b => b.id === aiBookId);
-    if (!book) return;
-    if (confirm('清空与这本书的 AI 对话记录？')) { book.aiChat = []; save('books'); renderAIMessages(); }
   });
 }
 
