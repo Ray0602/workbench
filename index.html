@@ -603,8 +603,10 @@ body.locked .app-header, body.locked .tabs, body.locked .container { display: no
       <textarea id="fit-note" rows="2" placeholder="今天练了什么？状态、重量、感受…（选填）" style="margin-top:10px"></textarea>
       <div id="fit-photos" class="fit-photos"></div>
       <div class="row" style="margin-top:10px;gap:8px;align-items:center">
-        <label class="btn" for="fit-file">📷 拍照 / 添加照片</label>
-        <input type="file" id="fit-file" accept="image/*" multiple capture="environment" style="display:none" />
+        <label class="btn" for="fit-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L19 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg> 拍照</label>
+        <label class="btn ghost" for="fit-album"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg> 从相册选</label>
+        <input type="file" id="fit-camera" accept="image/*" multiple capture="environment" style="display:none" />
+        <input type="file" id="fit-album" accept="image/*" multiple style="display:none" />
         <span class="hint" id="fit-photo-hint">最多 9 张，自动压缩</span>
         <span class="spacer"></span>
         <button class="btn primary" id="fit-save">保存打卡</button>
@@ -1191,23 +1193,26 @@ let fitDraft = [];
 
 function initFitCompose() {
   const d = $('#fit-date'); if (d) d.value = todayStr();
-  const f = $('#fit-file');
-  if (f) f.onchange = () => {
-    const files = Array.from(f.files || []);
-    const room = 9 - fitDraft.length;
-    if (room <= 0) { toast('最多 9 张照片', 'warn'); f.value = ''; return; }
-    const picked = files.slice(0, room);
-    if (!picked.length) { f.value = ''; return; }
-    let done = 0;
-    picked.forEach(file => {
-      compressImage(file, 800, 0.82).then(dataUrl => {
-        fitDraft.push({ id: uid(), data: dataUrl });
-      }).catch(() => {}).finally(() => {
-        done++;
-        if (done === picked.length) { renderFitDraft(); f.value = ''; }
+  ['fit-camera', 'fit-album'].forEach(id => {
+    const f = $('#' + id);
+    if (!f) return;
+    f.onchange = () => {
+      const files = Array.from(f.files || []);
+      const room = 9 - fitDraft.length;
+      if (room <= 0) { toast('最多 9 张照片', 'warn'); f.value = ''; return; }
+      const picked = files.slice(0, room);
+      if (!picked.length) { f.value = ''; return; }
+      let done = 0;
+      picked.forEach(file => {
+        compressImage(file, 800, 0.82).then(dataUrl => {
+          fitDraft.push({ id: uid(), data: dataUrl });
+        }).catch(() => {}).finally(() => {
+          done++;
+          if (done === picked.length) { renderFitDraft(); f.value = ''; }
+        });
       });
-    });
-  };
+    };
+  });
   renderFitDraft();
 }
 
