@@ -1,10 +1,10 @@
 {
-  "generated": "2026-08-07",
+  "generated": "2026-08-08",
   "range": [
     "2023-08-05",
     "2026-08-05"
   ],
-  "train_days": 703,
+  "train_days": 704,
   "axes": [
     "频次",
     "覆盖",
@@ -15,7 +15,7 @@
     "手臂": [
       100,
       100,
-      22,
+      23,
       85
     ],
     "胸": [
@@ -48,16 +48,16 @@
       "label": "手臂",
       "color": "#6366f1",
       "metrics": {
-        "days": 157,
+        "days": 158,
         "distinct": 51,
-        "sets": 1222,
-        "tonnage": 188926,
+        "sets": 1225,
+        "tonnage": 189489,
         "maxw": 170.0,
         "maxw_move": "器械三头下压",
         "year_days": {
           "2024": 39,
           "2025": 33,
-          "2026": 85
+          "2026": 86
         },
         "top_moves": [
           [
@@ -85,11 +85,11 @@
             16
           ],
           [
-            "坐姿器械二头弯举",
-            14
+            "锤式弯举",
+            15
           ],
           [
-            "锤式弯举",
+            "坐姿器械二头弯举",
             14
           ]
         ]
@@ -97,13 +97,13 @@
       "radar": [
         100,
         100,
-        22,
+        23,
         85
       ],
       "strength": "练得最勤、覆盖最广（157 天 / 51 个动作）；三头孤立（绳索·器械臂屈伸、下压）容量足，器械三头下压冲到 170kg。",
       "weakness": "二头偏弱，弯举多为绳索/器械孤立动作，自由重量复合（哑铃弯举、窄距卧推）少，缺大重量复合带动整体臂围。",
       "advice": "加哑铃弯举与哑铃颈后臂屈伸等自由重量复合，2–3 组×8–10 冲重量；保持现有高频，二头三头分开给容量。",
-      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#6366f1\" text-anchor=\"middle\">手臂 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,55.0 245.0,150.0 150.0,170.9 69.2,150.0\" fill=\"#6366f122\" stroke=\"#6366f1\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"55.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"245.0\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"150.0\" cy=\"170.9\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"69.2\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><text x=\"150.0\" y=\"47.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"245.0\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150.0\" y=\"162.9\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">22</text><text x=\"69.2\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">85</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 157 · 动作 51 种 · 组 1222</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 188,926kg · 最大 170kg（器械三头下压）</text></svg>"
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#6366f1\" text-anchor=\"middle\">手臂 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,55.0 245.0,150.0 150.0,171.8 69.2,150.0\" fill=\"#6366f122\" stroke=\"#6366f1\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"55.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"245.0\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"150.0\" cy=\"171.8\" r=\"3.5\" fill=\"#6366f1\"/><circle cx=\"69.2\" cy=\"150.0\" r=\"3.5\" fill=\"#6366f1\"/><text x=\"150.0\" y=\"47.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"245.0\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150.0\" y=\"163.8\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">23</text><text x=\"69.2\" y=\"142.0\" font-size=\"10\" fill=\"#6366f1\" text-anchor=\"middle\" font-weight=\"700\">85</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 158 · 动作 51 种 · 组 1225</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 189,489kg · 最大 170kg（器械三头下压）</text></svg>"
     },
     "胸": {
       "label": "胸",
@@ -231,16 +231,16 @@
       "label": "腿",
       "color": "#10b981",
       "metrics": {
-        "days": 122,
+        "days": 123,
         "distinct": 40,
-        "sets": 1422,
+        "sets": 1425,
         "tonnage": 841378,
         "maxw": 200.0,
         "maxw_move": "杠杆坐姿小腿屈伸",
         "year_days": {
           "2024": 28,
           "2025": 22,
-          "2026": 72
+          "2026": 73
         },
         "top_moves": [
           [
@@ -286,22 +286,22 @@
       "strength": "覆盖最全面：股四（深蹲/腿屈伸）、腘绳（腿弯举）、臀（臀冲）、髋（内收/外展）都练到，估算容量五大部位最高（84 万 kg），小腿杠杆机器冲 200kg。",
       "weakness": "深蹲以机器哈克/箭步蹲为主，自由重量深蹲与罗马尼亚硬拉（仅 7 次）偏少，自由重量大重量复合不足，绝对力量上限未充分开发。",
       "advice": "加哑铃保加利亚分腿蹲与加重哑铃罗马尼亚硬拉，5×5 冲大重量；硬拉补足后链。",
-      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#10b981\" text-anchor=\"middle\">腿 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,75.9 224.1,150.0 150.0,245.0 55.0,150.0\" fill=\"#10b98122\" stroke=\"#10b981\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"75.9\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"224.1\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"150.0\" cy=\"245.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"55.0\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><text x=\"150.0\" y=\"67.9\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"224.1\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"150.0\" y=\"237.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"55.0\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 122 · 动作 40 种 · 组 1422</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 841,378kg · 最大 200kg（杠杆坐姿小腿屈伸）</text></svg>"
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#10b981\" text-anchor=\"middle\">腿 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,75.9 224.1,150.0 150.0,245.0 55.0,150.0\" fill=\"#10b98122\" stroke=\"#10b981\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"75.9\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"224.1\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"150.0\" cy=\"245.0\" r=\"3.5\" fill=\"#10b981\"/><circle cx=\"55.0\" cy=\"150.0\" r=\"3.5\" fill=\"#10b981\"/><text x=\"150.0\" y=\"67.9\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"224.1\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">78</text><text x=\"150.0\" y=\"237.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"55.0\" y=\"142.0\" font-size=\"10\" fill=\"#10b981\" text-anchor=\"middle\" font-weight=\"700\">100</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 123 · 动作 40 种 · 组 1425</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 841,378kg · 最大 200kg（杠杆坐姿小腿屈伸）</text></svg>"
     },
     "背": {
       "label": "背",
       "color": "#3b82f6",
       "metrics": {
-        "days": 129,
+        "days": 130,
         "distinct": 44,
-        "sets": 1682,
-        "tonnage": 778358,
+        "sets": 1696,
+        "tonnage": 786053,
         "maxw": 140.0,
         "maxw_move": "器械划船1",
         "year_days": {
           "2024": 35,
           "2025": 30,
-          "2026": 64
+          "2026": 65
         },
         "top_moves": [
           [
@@ -326,15 +326,15 @@
           ],
           [
             "俯卧哑铃划船（锤式）",
-            21
+            22
+          ],
+          [
+            "器械划船1",
+            19
           ],
           [
             "宽距下拉",
             19
-          ],
-          [
-            "器械划船1",
-            18
           ]
         ]
       },
@@ -347,16 +347,25 @@
       "strength": "动作覆盖最广最均衡（44 种拉类），引体向上保持好（31 次），背阔+中背（各类划船）+下背（山羊挺身）齐全。",
       "weakness": "绝对重量中等（器械划船 140kg 封顶），硬拉类（罗马尼亚硬拉 7 次）偏少，后链力量有提升空间。",
       "advice": "增加硬拉/罗马尼亚硬拉的重量与频次强化后链；引体可加负重冲次数与力量。",
-      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#3b82f6\" text-anchor=\"middle\">背 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,72.1 231.7,150.0 150.0,238.3 83.5,150.0\" fill=\"#3b82f622\" stroke=\"#3b82f6\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"72.1\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"231.7\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"150.0\" cy=\"238.3\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"83.5\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><text x=\"150.0\" y=\"64.1\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">82</text><text x=\"231.7\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">86</text><text x=\"150.0\" y=\"230.3\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">93</text><text x=\"83.5\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">70</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 129 · 动作 44 种 · 组 1682</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 778,358kg · 最大 140kg（器械划船1）</text></svg>"
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 340\" width=\"100%\" font-family=\"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif\"><text x=\"150\" y=\"26\" font-size=\"17\" font-weight=\"800\" fill=\"#3b82f6\" text-anchor=\"middle\">背 · 多维评价</text><polygon points=\"150.0,126.2 173.8,150.0 150.0,173.8 126.2,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,102.5 197.5,150.0 150.0,197.5 102.5,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,78.8 221.2,150.0 150.0,221.2 78.8,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><polygon points=\"150.0,55.0 245.0,150.0 150.0,245.0 55.0,150.0\" fill=\"none\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"55.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"43.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">频次</text><line x1=\"150\" y1=\"150\" x2=\"245.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"261.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">覆盖</text><line x1=\"150\" y1=\"150\" x2=\"150.0\" y2=\"245.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"150.0\" y=\"265.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">容量</text><line x1=\"150\" y1=\"150\" x2=\"55.0\" y2=\"150.0\" stroke=\"#e5e7eb\" stroke-width=\"1\"/><text x=\"39.0\" y=\"154.0\" font-size=\"12\" fill=\"#6b7280\" text-anchor=\"middle\">力量</text><polygon points=\"150.0,72.1 231.7,150.0 150.0,238.3 83.5,150.0\" fill=\"#3b82f622\" stroke=\"#3b82f6\" stroke-width=\"2.5\"/><circle cx=\"150.0\" cy=\"72.1\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"231.7\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"150.0\" cy=\"238.3\" r=\"3.5\" fill=\"#3b82f6\"/><circle cx=\"83.5\" cy=\"150.0\" r=\"3.5\" fill=\"#3b82f6\"/><text x=\"150.0\" y=\"64.1\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">82</text><text x=\"231.7\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">86</text><text x=\"150.0\" y=\"230.3\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">93</text><text x=\"83.5\" y=\"142.0\" font-size=\"10\" fill=\"#3b82f6\" text-anchor=\"middle\" font-weight=\"700\">70</text><text x=\"150\" y=\"300\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">训练日 130 · 动作 44 种 · 组 1696</text><text x=\"150\" y=\"320\" font-size=\"12\" fill=\"#374151\" text-anchor=\"middle\">估算容量 786,053kg · 最大 140kg（器械划船1）</text></svg>"
     }
   },
   "enhancement": {
-    "week_range": "2026-07-31 ~ 2026-08-06",
-    "generated": "2026-08-07",
+    "week_range": "2026-08-01 ~ 2026-08-07",
+    "generated": "2026-08-08",
     "parts": {
       "手臂": {
         "color": "#6366f1",
         "items": [
+          {
+            "action": "锤式弯举",
+            "last_w": 12.5,
+            "target_w": 15.0,
+            "sets": 4,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
           {
             "action": "平板哑铃臂屈伸（单）",
             "last_w": 10.0,
@@ -550,8 +559,17 @@
         "items": [
           {
             "action": "器械划船2",
-            "last_w": 64.0,
-            "target_w": 67.5,
+            "last_w": 68.0,
+            "target_w": 72.5,
+            "sets": 6,
+            "reps": "8-10",
+            "is_new": false,
+            "note": "加重"
+          },
+          {
+            "action": "器械划船1",
+            "last_w": 55.0,
+            "target_w": 57.5,
             "sets": 6,
             "reps": "8-10",
             "is_new": false,
@@ -578,6 +596,6 @@
         ]
       }
     },
-    "tip": "本周重点：手臂（上周仅 2 个动作）。沿用上周器械加重、加组；缺口以小肌群哑铃动作补足，动作数明显提升，单次时长建议 +10~15 分钟。"
+    "tip": "本周重点：手臂（上周仅 3 个动作）。沿用上周器械加重、加组；缺口以小肌群哑铃动作补足，动作数明显提升，单次时长建议 +10~15 分钟。"
   }
 }
