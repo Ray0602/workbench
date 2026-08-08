@@ -1536,7 +1536,7 @@ function renderFitness() {
         <button class="btn sm danger" data-act="del" data-id="${f.id}">${iconX()}</button>
       </div>
       ${f.note ? `<div class="fit-note">${escapeHTML(f.note)}</div>` : ''}
-      ${f.photos && f.photos.length ? `<div class="fit-photos" data-fid="${f.id}">${f.photos.map(p => `<img class="fit-photo" data-fid="${f.id}" data-pid="${p.id}" alt="打卡照片" />`).join('')}</div>` : ''}
+      ${f.photos && f.photos.length ? `<div class="fit-photos" data-fid="${f.id}">${f.photos.map(p => `<img class="fit-photo" data-fid="${f.id}" data-pid="${p.id}" ${p.data ? `src="${p.data}"` : ''} alt="打卡照片" />`).join('')}</div>` : ''}
     </div>
   `).join('');
   // 异步从 IDB 解析每张照片的实际 src
@@ -2003,8 +2003,14 @@ function importAll() {
           // 重渲前 revoke 老 objectURL（健身 tab 的）
           revokeAllPhotoUrls();
           const restored = await restorePhotos();
+          // 兼容「迁移前老备份」：照片可能仍以 base64 内嵌在 fitness 里。
+          // 导入时统一抽到 IDB，避免重新撑爆 localStorage，并保证能正常显示。
+          const flushed = await flushEmbeddedPhotosToIDB();
           closeModal(); renderAll();
-          toast(`${mode === 'overwrite' ? '已覆盖' : '已合并'} ${count} 个数据集${restored ? `，照片 ${restored} 张` : ''}`);
+          const parts = [`${mode === 'overwrite' ? '已覆盖' : '已合并'} ${count} 个数据集`];
+          if (restored) parts.push(`打包照片 ${restored} 张`);
+          if (flushed) parts.push(`内嵌照片转存 ${flushed} 张`);
+          toast(parts.join('，'));
         };
         if (mode === 'overwrite') {
           // 覆盖前先自动下载本机快照到下载目录，作为防误操作的兜底
@@ -2270,12 +2276,17 @@ async function migrateFitPhotos() {
     f.photos.forEach(p => {
       if (!p || typeof p !== 'object') return;
       if (typeof p.data === 'string') {
+        touched = true;
         const blob = dataURLtoBlob(p.data);
         if (blob) {
+          // 转换成功：base64 已写入 IDB，记录里只留 {id}，localStorage 得以瘦身
           tasks.push(idb.put(p.id, blob).then(() => { movedCount++; }).catch(() => {}));
+          newPhotos.push({ id: p.id });
+        } else {
+          // 转换失败（如 base64 之前被截断）：保留原始 base64 兜底，绝不静默丢弃
+          newPhotos.push(p);
+          console.warn('[migrateFitPhotos] 照片', p.id, 'base64 转 Blob 失败，保留原始兜底');
         }
-        newPhotos.push({ id: p.id });
-        touched = true;
       } else if (p.id) {
         newPhotos.push({ id: p.id });
       }
@@ -2290,6 +2301,36 @@ async function migrateFitPhotos() {
   }
   localStorage.setItem('wb_pm_fit_migrated', '1');
   console.log('[migrateFitPhotos]', { moved: movedCount, touched });
+}
+
+// 把 Schema.fitness 里仍内嵌的 base64 照片抽进 IndexedDB（用于导入旧备份后兜底）。
+// 返回成功转存的张数；无内嵌照片返回 0。绝不静默丢弃：转换失败的保留原始 base64。
+async function flushEmbeddedPhotosToIDB() {
+  if (!Schema.fitness || !Schema.fitness.length) return 0;
+  let done = 0, touched = false;
+  const tasks = [];
+  Schema.fitness.forEach(f => {
+    if (!Array.isArray(f.photos)) return;
+    const next = [];
+    f.photos.forEach(p => {
+      if (p && typeof p.data === 'string') {
+        touched = true;
+        const blob = dataURLtoBlob(p.data);
+        if (blob) {
+          tasks.push(idb.put(p.id, blob).then(() => { done++; }).catch(() => {}));
+          next.push({ id: p.id });
+        } else {
+          next.push(p); // 兜底：保留原始 base64，不丢
+        }
+      } else {
+        next.push(p);
+      }
+    });
+    f.photos = next;
+  });
+  if (tasks.length) await Promise.all(tasks);
+  if (touched) { try { save('fitness'); } catch (e) { console.warn('flush 保存失败', e); } }
+  return done;
 }
 
 async function init() {
