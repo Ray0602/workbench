@@ -23,21 +23,91 @@
   --text: #111827;
   --muted: #6b7280;
   --subtle: #9ca3af;
-  --primary: #2563EB;
-  --primary-soft: #DBEAFE;
-  --primary-deep: #1D4ED8;
+  --primary: #F97316;
+  --primary-soft: #FFEDD5;
+  --primary-deep: #EA580C;
+  --primary-tint: #FFF4EC;
+  --primary-ring: rgba(249,115,22,.35);
   --success: #16a34a;
   --danger: #e5484d;
   --warn: #f59e0b;
-  --accent: #facc15;
-  --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
-  --shadow: 0 2px 12px rgba(15,23,42,.06);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --accent: #FB923C;
+  --shadow-sm: 0 1px 3px rgba(15,23,42,.06);
+  --shadow: 0 6px 20px rgba(15,23,42,.08);
+  --radius: 14px;
+  --radius-sm: 10px;
   --tab-h: 56px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --header-h: 60px;
 }
+
+/* ===== 主题配色：静谧蓝（原配色，作为备选） ===== */
+html[data-theme="blue"] {
+  --primary: #2563EB;
+  --primary-soft: #DBEAFE;
+  --primary-deep: #1D4ED8;
+  --primary-tint: #EEF4FF;
+  --primary-ring: rgba(37,99,235,.35);
+  --accent: #3B82F6;
+}
+/* 主题配色：活力橙（默认，与 :root 一致，便于切换对齐） */
+html[data-theme="orange"] {
+  --primary: #F97316;
+  --primary-soft: #FFEDD5;
+  --primary-deep: #EA580C;
+  --primary-tint: #FFF4EC;
+  --primary-ring: rgba(249,115,22,.35);
+  --accent: #FB923C;
+}
+
+/* ===== 活泼鲜明风 + 淡染 ===== */
+/* 顶部主题色带 */
+body::before {
+  content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  z-index: 60; pointer-events: none;
+}
+/* 顶部 header 淡染 + 平滑过渡（换肤有动画） */
+.app-header { background: linear-gradient(180deg, var(--primary-tint), rgba(255,255,255,.9)); }
+body, .btn, .card, .review-item, .fit-item, .news-item, .xunji-card,
+.tabbar button, .tabs button, .app-header, .today, .modal, .theme-pop {
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.card { box-shadow: var(--shadow-sm); }
+.card:hover { box-shadow: var(--shadow); }
+/* 区块标题左侧主题色条 */
+.section-title { position: relative; padding-left: 10px; }
+.section-title::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 3px; background: var(--primary); }
+/* 今天卡片淡染底 + 主题描边 */
+.today {
+  background: var(--primary-tint);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 14px 6px;
+}
+/* 快速进入卡片描边带主题色 */
+.grid-3 .card { border-color: var(--primary-tint); }
+/* 主题切换弹层 */
+.btn-theme { position: relative; }
+.theme-pop {
+  position: fixed; top: calc(var(--header-h) + 6px); right: 12px; z-index: 70;
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 10px; display: none; min-width: 188px;
+}
+.theme-pop.open { display: block; animation: popIn .15s ease; }
+@keyframes popIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.theme-pop .tp-title { font-size: 12px; color: var(--muted); margin: 2px 4px 8px; }
+.theme-pop .tp-row { display: flex; gap: 10px; }
+.theme-swatch {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 10px 6px; border: 1px solid var(--border); border-radius: 10px;
+  cursor: pointer; background: #fff; font-size: 12px; color: var(--text);
+}
+.theme-swatch:hover { border-color: var(--primary); }
+.theme-swatch.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint); }
+.theme-swatch .dot { width: 26px; height: 26px; border-radius: 50%; }
+.theme-swatch .dot.o { background: linear-gradient(135deg, #F97316, #FB923C); }
+.theme-swatch .dot.b { background: linear-gradient(135deg, #2563EB, #3B82F6); }
 * { box-sizing: border-box; }
 html, body { margin:0; padding:0; background: var(--bg); color: var(--text); }
 body {
@@ -2114,6 +2184,14 @@ function iconDownload() { return svg('<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-
 function iconUpload() { return svg('<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/>'); }
 function iconTrash() { return svg('<path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>'); }
 function iconLock() { return svg('<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>'); }
+function iconPalette() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1 .9-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7z"/>
+    <circle cx="7.5" cy="10.5" r="1" fill="#F97316" stroke="none"/>
+    <circle cx="12" cy="7.5" r="1" fill="#2563EB" stroke="none"/>
+    <circle cx="16.5" cy="10.5" r="1" fill="#16a34a" stroke="none"/>
+  </svg>`;
+}
 function svg(inner) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`; }
 
 // ---------- 主渲染 ----------
@@ -2131,17 +2209,58 @@ function renderAll() { render(currentTab); renderTabs(); }
 function bindHeaderActions() {
   const header = $('.app-actions');
   header.innerHTML = `
+    <button class="btn sm btn-theme" id="btn-theme" title="切换主题配色">${iconPalette()}<span class="long-text">主题</span></button>
     <button class="btn sm" id="btn-lock" title="锁定 / 启用手令锁">${iconLock()}<span class="long-text">锁</span></button>
     <button class="btn sm" id="btn-export" title="导出全部数据 JSON 备份">${iconDownload()}<span class="long-text">导出</span></button>
     <button class="btn sm" id="btn-import" title="导入 JSON 备份">${iconUpload()}<span class="long-text">导入</span></button>
     <button class="btn sm" id="btn-data" title="数据存放方式与隐私说明">${iconShield()}<span class="long-text">安全</span></button>
     <button class="btn sm danger" id="btn-clear" title="清空全部数据">${iconTrash()}</button>
   `;
+  $('#btn-theme').onclick = (e) => {
+    e.stopPropagation();
+    buildThemePop();
+    const pop = document.getElementById('theme-pop');
+    const cur = document.documentElement.getAttribute('data-theme') || 'orange';
+    pop.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === cur));
+    pop.classList.toggle('open');
+  };
   $('#btn-lock').onclick = () => { if (isLockSet()) lockNow(); else showLock(); };
   $('#btn-export').onclick = () => exportAll();
   $('#btn-import').onclick = importAll;
   $('#btn-data').onclick = showDataSecurity;
   $('#btn-clear').onclick = clearAll;
+}
+
+// 主题切换：应用 + 持久化
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('wb_pm_theme', t); } catch (e) {}
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === t));
+}
+// 构建主题弹层（只建一次）
+function buildThemePop() {
+  if (document.getElementById('theme-pop')) return;
+  const pop = document.createElement('div');
+  pop.className = 'theme-pop';
+  pop.id = 'theme-pop';
+  pop.innerHTML = `
+    <div class="tp-title">选择主题配色</div>
+    <div class="tp-row">
+      <div class="theme-swatch" data-theme="orange"><span class="dot o"></span>活力橙</div>
+      <div class="theme-swatch" data-theme="blue"><span class="dot b"></span>静谧蓝</div>
+    </div>`;
+  document.body.appendChild(pop);
+  pop.querySelectorAll('.theme-swatch').forEach(s => {
+    s.onclick = () => {
+      applyTheme(s.dataset.theme);
+      pop.classList.remove('open');
+      toast('已切换主题：' + (s.dataset.theme === 'orange' ? '活力橙' : '静谧蓝'), 'ok');
+    };
+  });
+  // 点击空白处关闭
+  document.addEventListener('click', (e) => {
+    if (!pop.contains(e.target) && !(e.target.closest && e.target.closest('#btn-theme'))) pop.classList.remove('open');
+  });
 }
 
 function bindModuleActions() {
@@ -2335,6 +2454,10 @@ async function flushEmbeddedPhotosToIDB() {
 
 async function init() {
   loadAll();
+  // 应用已保存的主题（默认活力橙）；写入 <html data-theme> 驱动整套 CSS 令牌
+  let savedTheme = 'orange';
+  try { const t = localStorage.getItem('wb_pm_theme'); if (t === 'blue' || t === 'orange') savedTheme = t; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', savedTheme);
   // 仅“首次运行（本地存储完全没有任何 wb_pm_ 数据）”才预置示例，
   // 避免“复盘为空 / 未 onboarded”就误把用户真实数据重置成示例数据
   const firstRun = !Object.keys(localStorage).some(k => k.startsWith(KEY));
