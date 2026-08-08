@@ -714,6 +714,160 @@ const store = {
   clearAll() { Object.keys(localStorage).filter(k => k.startsWith(KEY)).forEach(k => localStorage.removeItem(k)); }
 };
 
+// ---------- IndexedDB（健身照片专用） ----------
+// 解决 localStorage 5MB 上限：照片 Blob 单独存 IndexedDB（容量几 GB 起步），
+// Schema.fitness[].photos[] 只留 {id} 引用，body 数据不再进 localStorage。
+const IDB_NAME = 'wb_pm_fit';
+const IDB_STORE = 'photos';
+const IDB_VERSION = 1;
+const idb = {
+  _db: null,
+  _opening: null,
+  open() {
+    if (idb._db) return Promise.resolve(idb._db);
+    if (idb._opening) return idb._opening;
+    if (typeof indexedDB === 'undefined') return Promise.reject(new Error('当前环境不支持 IndexedDB'));
+    idb._opening = new Promise((resolve, reject) => {
+      let req;
+      try { req = indexedDB.open(IDB_NAME, IDB_VERSION); }
+      catch (e) { idb._opening = null; reject(e); return; }
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = () => { idb._db = req.result; idb._opening = null; resolve(req.result); };
+      req.onerror = () => { idb._opening = null; reject(req.error || new Error('IDB 打开失败')); };
+      req.onblocked = () => { idb._opening = null; reject(new Error('IDB 被阻塞')); };
+    });
+    return idb._opening;
+  },
+  async _store(mode) {
+    const db = await idb.open();
+    return db.transaction(IDB_STORE, mode).objectStore(IDB_STORE);
+  },
+  put(id, blob) {
+    return new Promise((resolve, reject) => {
+      idb._store('readwrite').then(s => {
+        const r = s.put(blob, id);
+        r.onsuccess = () => resolve(id);
+        r.onerror = () => reject(r.error || new Error('IDB put 失败'));
+      }).catch(reject);
+    });
+  },
+  putMany(entries) { return Promise.all((entries || []).map(([id, blob]) => idb.put(id, blob))); },
+  get(id) {
+    return new Promise(resolve => {
+      idb._store('readonly').then(s => {
+        const r = s.get(id);
+        r.onsuccess = () => resolve(r.result || null);
+        r.onerror = () => resolve(null);
+      }).catch(() => resolve(null));
+    });
+  },
+  del(id) {
+    return new Promise(resolve => {
+      idb._store('readwrite').then(s => {
+        const r = s.delete(id);
+        r.onsuccess = () => resolve();
+        r.onerror = () => resolve();
+      }).catch(() => resolve());
+    });
+  },
+  delMany(ids) { return Promise.all((ids || []).map(id => idb.del(id))); },
+  keys() {
+    return new Promise(resolve => {
+      idb._store('readonly').then(s => {
+        const r = s.getAllKeys();
+        r.onsuccess = () => resolve(r.result || []);
+        r.onerror = () => resolve([]);
+      }).catch(() => resolve([]));
+    });
+  },
+  all() {
+    return new Promise(resolve => {
+      idb._store('readonly').then(s => {
+        const r = s.getAll();
+        r.onsuccess = () => {
+          const kr = s.getAllKeys();
+          kr.onsuccess = () => {
+            const keys = kr.result || [];
+            const blobs = r.result || [];
+            resolve(keys.map((k, i) => [k, blobs[i]]));
+          };
+          kr.onerror = () => resolve([]);
+        };
+        r.onerror = () => resolve([]);
+      }).catch(() => resolve([]));
+    });
+  },
+  clear() {
+    return new Promise(resolve => {
+      idb._store('readwrite').then(s => {
+        const r = s.clear();
+        r.onsuccess = () => resolve();
+        r.onerror = () => resolve();
+      }).catch(() => resolve());
+    });
+  }
+};
+
+// dataURL ↔ Blob 互转（迁移老照片 + 备份导出/导入时用）
+function dataURLtoBlob(dataUrl) {
+  if (typeof dataUrl !== 'string') return null;
+  const m = /^data:([^;,]+)(;base64)?,(.*)$/s.exec(dataUrl);
+  if (!m) return null;
+  const mime = m[1] || 'image/jpeg';
+  const isBase64 = !!m[2];
+  const data = m[3] || '';
+  try {
+    if (isBase64) {
+      const bin = atob(data);
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    }
+    return new Blob([decodeURIComponent(data)], { type: mime });
+  } catch (e) { return null; }
+}
+function blobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(fr.result);
+    fr.onerror = () => reject(fr.error);
+    fr.readAsDataURL(blob);
+  });
+}
+
+// 照片 ObjectURL 缓存，避免每个 img 元素都查一次 IDB
+const photoUrlCache = new Map();
+async function getPhotoUrl(pid) {
+  if (!pid) return '';
+  if (photoUrlCache.has(pid)) return photoUrlCache.get(pid);
+  const blob = await idb.get(pid);
+  if (!blob) return '';
+  const url = URL.createObjectURL(blob);
+  photoUrlCache.set(pid, url);
+  return url;
+}
+function revokeAllPhotoUrls() {
+  photoUrlCache.forEach(url => { try { URL.revokeObjectURL(url); } catch {} });
+  photoUrlCache.clear();
+}
+function revokePhotoUrl(pid) {
+  const u = photoUrlCache.get(pid);
+  if (u) { try { URL.revokeObjectURL(u); } catch {} photoUrlCache.delete(pid); }
+}
+
+// 把已经渲染好的 img[data-pid] 异步解析出 src
+function resolveFitPhotos(scope) {
+  (scope || document).querySelectorAll('img.fit-photo[data-pid]').forEach(img => {
+    const pid = img.dataset.pid;
+    if (!pid) return;
+    if (img.src && img.src.startsWith('blob:')) return;
+    getPhotoUrl(pid).then(url => { if (url) img.src = url; else img.alt = '照片丢失'; });
+  });
+}
+
 // ---------- 数据结构 ----------
 const Schema = {
   reviews: [],   // {id, date, done, problem, achievement, tags:[]}
@@ -832,7 +986,7 @@ function renderToday() {
 
   const totalItems = Schema.reviews.length + Schema.notes.length + Schema.fitness.length;
   if (totalItems >= 30) {
-    items.push({ key:'backup', label: `数据已积累 ${totalItems} 条`, meta: '建议导出备份', overdue: false, action: '导出', cb: exportAll });
+    items.push({ key:'backup', label: `数据已积累 ${totalItems} 条`, meta: '建议导出备份', overdue: false, action: '导出', cb: () => exportAll() });
   }
 
   if (!items.length) {
@@ -1249,8 +1403,8 @@ function initFitCompose() {
       if (!picked.length) { f.value = ''; return; }
       let done = 0;
       picked.forEach(file => {
-        compressImage(file, 800, 0.82).then(dataUrl => {
-          fitDraft.push({ id: uid(), data: dataUrl });
+        compressImageBlob(file, 800, 0.82).then(blob => {
+          fitDraft.push({ id: uid(), blob });
         }).catch(() => {}).finally(() => {
           done++;
           if (done === picked.length) { renderFitDraft(); f.value = ''; }
@@ -1261,50 +1415,77 @@ function initFitCompose() {
   renderFitDraft();
 }
 
-function compressImage(file, maxW, quality) {
+function compressImageBlob(file, maxW, quality) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
-        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        try { resolve(canvas.toDataURL('image/jpeg', quality)); }
-        catch (e) { reject(e); }
-      };
-      img.onerror = reject;
-      img.src = reader.result;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      try {
+        canvas.toBlob(b => {
+          if (b) resolve(b); else reject(new Error('压缩失败'));
+        }, 'image/jpeg', quality);
+      } catch (e) { reject(e); }
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e || new Error('图片解码失败')); };
+    img.src = url;
   });
 }
 
 function renderFitDraft() {
+  // 给每张草稿生成 ObjectURL（避免立刻 revoke 闪烁）
+  fitDraft.forEach(p => { if (!p.url && p.blob) p.url = URL.createObjectURL(p.blob); });
   const box = $('#fit-photos'); if (!box) return;
   box.innerHTML = fitDraft.map(p => `
     <div class="fit-thumb">
-      <img src="${p.data}" alt="打卡照片草稿" />
+      <img src="${p.url || ''}" alt="打卡照片草稿" />
       <button class="fit-thumb-x" data-id="${p.id}" title="移除">×</button>
     </div>`).join('');
-  const hint = $('#fit-photo-hint'); if (hint) hint.textContent = `已选 ${fitDraft.length}/9 张，自动压缩`;
+  const hint = $('#fit-photo-hint'); if (hint) hint.textContent = `已选 ${fitDraft.length}/9 张，自动压缩（IndexedDB 存储）`;
   box.onclick = e => {
     const b = e.target.closest('button[data-id]'); if (!b) return;
+    const removed = fitDraft.find(x => x.id === b.dataset.id);
+    if (removed && removed.url) { try { URL.revokeObjectURL(removed.url); } catch {} }
     fitDraft = fitDraft.filter(x => x.id !== b.dataset.id);
     renderFitDraft();
   };
 }
 
-function saveCheckIn() {
+async function saveCheckIn() {
   const date = ($('#fit-date')?.value || todayStr());
   const part = ($('#fit-part')?.value || '').trim();
   const note = ($('#fit-note')?.value || '').trim();
   if (!note && !part && !fitDraft.length) { toast('写点什么或加张照片吧', 'warn'); return; }
-  Schema.fitness.unshift({ id: uid(), date, part, note, photos: fitDraft.slice() });
+  if (!fitDraft.length) {
+    // 纯文字记录：照旧走老路径即可
+    Schema.fitness.unshift({ id: uid(), date, part, note, photos: [] });
+    save('fitness');
+    if ($('#fit-part')) $('#fit-part').value = '';
+    if ($('#fit-note')) $('#fit-note').value = '';
+    if ($('#fit-date')) $('#fit-date').value = todayStr();
+    renderFitness(); renderToday();
+    toast('打卡已保存');
+    return;
+  }
+  const photoIds = fitDraft.map(p => p.id);
+  const newRecordId = uid();
+  // 1) 记录先入 Schema，再异步写 IDB。万一 IDB 写失败，回滚 Schema
+  Schema.fitness.unshift({ id: newRecordId, date, part, note, photos: photoIds.map(id => ({ id })) });
+  try {
+    await idb.putMany(fitDraft.map(p => [p.id, p.blob]));
+  } catch (e) {
+    Schema.fitness = Schema.fitness.filter(x => x.id !== newRecordId);
+    toast('照片保存失败：' + (e && e.message ? e.message : e), 'danger');
+    return;
+  }
   save('fitness');
+  // 释放草稿 ObjectURL，清空 fitDraft
+  fitDraft.forEach(p => { if (p.url) { try { URL.revokeObjectURL(p.url); } catch {} } });
   fitDraft = [];
   if ($('#fit-part')) $('#fit-part').value = '';
   if ($('#fit-note')) $('#fit-note').value = '';
@@ -1355,24 +1536,33 @@ function renderFitness() {
         <button class="btn sm danger" data-act="del" data-id="${f.id}">${iconX()}</button>
       </div>
       ${f.note ? `<div class="fit-note">${escapeHTML(f.note)}</div>` : ''}
-      ${f.photos && f.photos.length ? `<div class="fit-photos">${f.photos.map(p => `<img class="fit-photo" data-fid="${f.id}" data-pid="${p.id}" src="${p.data}" alt="打卡照片" />`).join('')}</div>` : ''}
+      ${f.photos && f.photos.length ? `<div class="fit-photos" data-fid="${f.id}">${f.photos.map(p => `<img class="fit-photo" data-fid="${f.id}" data-pid="${p.id}" alt="打卡照片" />`).join('')}</div>` : ''}
     </div>
   `).join('');
+  // 异步从 IDB 解析每张照片的实际 src
+  resolveFitPhotos(root);
   root.onclick = e => {
     const del = e.target.closest('button[data-act="del"]');
     if (del) {
       const id = del.dataset.id;
+      const rec = Schema.fitness.find(x => x.id === id);
+      const photoIds = (rec && rec.photos) ? rec.photos.map(p => p.id).filter(Boolean) : [];
       if (confirm('删除这条打卡记录？照片将一并删除。')) {
         Schema.fitness = Schema.fitness.filter(x => x.id !== id);
-        save('fitness'); renderFitness(); renderToday();
+        save('fitness');
+        photoIds.forEach(pid => revokePhotoUrl(pid));
+        idb.delMany(photoIds).catch(() => {});
+        renderFitness(); renderToday();
       }
       return;
     }
     const img = e.target.closest('img.fit-photo');
     if (img) {
-      const rec = Schema.fitness.find(x => x.id === img.dataset.fid);
-      const photo = rec && rec.photos.find(p => p.id === img.dataset.pid);
-      if (photo) showModal(`<img src="${photo.data}" style="width:100%;border-radius:10px;display:block" alt="打卡照片" />`);
+      const pid = img.dataset.pid;
+      getPhotoUrl(pid).then(url => {
+        if (url) showModal(`<img src="${url}" style="width:100%;border-radius:10px;display:block" alt="打卡照片" />`);
+        else toast('照片已丢失，可能在新设备/清缓存后未导入', 'warn');
+      });
     }
   };
 }
@@ -1623,11 +1813,28 @@ async function _fsaWrite(handle, filename, content) {
   await w.close();
   return true;
 }
-function backupPayload() {
-  return { app: 'xiaotai-workbench', version: 1, exportedAt: new Date().toISOString(), data: Schema };
+// 备份导出：Schema + IDB 里的所有照片（base64 形式打包进 __photos），
+// 保证换设备/重置缓存后通过导入也能完整还原照片。
+async function backupPayload() {
+  const photos = {};
+  try {
+    const entries = await idb.all();
+    for (const [pid, blob] of entries) {
+      if (!blob) continue;
+      try { photos[pid] = await blobToDataURL(blob); } catch {}
+    }
+  } catch (e) { console.warn('打包 IDB 照片失败', e); }
+  return {
+    app: 'xiaotai-workbench',
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    data: Schema,
+    __photos: photos
+  };
 }
-function backupPayloadString() { return JSON.stringify(backupPayload(), null, 2); }
-async function writeAutoBackupFile(content) {
+async function backupPayloadString() { return JSON.stringify(await backupPayload(), null, 2); }
+async function writeAutoBackupFile() {
+  const content = await backupPayloadString();
   const handle = await _fsaLoadHandle();
   if (!handle) return false;
   return _fsaWrite(handle, 'workbench-backup-latest.json', content);
@@ -1637,7 +1844,7 @@ function scheduleAutoBackup() {
   clearTimeout(_backupTimer);
   _backupTimer = setTimeout(async () => {
     try {
-      const ok = await writeAutoBackupFile(backupPayloadString());
+      const ok = await writeAutoBackupFile();
       if (!ok) {
         autoBackupOn = false;
         localStorage.setItem('wb_pm_autobackup', '0');
@@ -1655,7 +1862,7 @@ async function enableAutoBackup() {
     autoBackupOn = true;
     autoBackupDirName = handle.name;
     localStorage.setItem('wb_pm_autobackup', '1');
-    const ok = await writeAutoBackupFile(backupPayloadString());
+    const ok = await writeAutoBackupFile();
     toast(ok ? `已绑定文件夹「${handle.name}」，自动备份开启` : '已绑定，但首次写入失败（权限？）', ok ? 'ok' : 'warn');
     updateAutoBackupUI();
   } catch (e) {
@@ -1674,7 +1881,8 @@ function manualBackupNow() {
   (async () => {
     const handle = await _fsaLoadHandle();
     if (!handle) { await enableAutoBackup(); return; }
-    const ok = await _fsaWrite(handle, `workbench-backup-${todayStr()}.json`, backupPayloadString());
+    const content = await backupPayloadString();
+    const ok = await _fsaWrite(handle, `workbench-backup-${todayStr()}.json`, content);
     if (ok) toast('已手动备份一份到文件夹');
     else toast('写入失败，请重新绑定文件夹', 'warn');
   })();
@@ -1715,9 +1923,10 @@ function autoBackupSectionHTML() {
 }
 
 // ---------- 备份与恢复 ----------
-function exportAll() {
-  downloadFile(`workbench-backup-${todayStr()}.json`, backupPayloadString(), 'application/json');
-  toast('备份已导出');
+async function exportAll() {
+  const json = await backupPayloadString();
+  downloadFile(`workbench-backup-${todayStr()}.json`, json, 'application/json');
+  toast('备份已导出（含照片）');
 }
 
 function importAll() {
@@ -1751,11 +1960,12 @@ function importAll() {
         reader.readAsText(f);
       };
       root.querySelector('[data-act="cancel"]').onclick = closeModal;
-      root.querySelector('[data-act="save"]').onclick = () => {
+      root.querySelector('[data-act="save"]').onclick = async () => {
         const txt = root.querySelector('#imp-json').value.trim();
         if (!txt) { toast('请提供 JSON 内容', 'warn'); return; }
         let data; try { data = JSON.parse(txt); } catch (err) { toast('JSON 解析失败：' + err.message, 'danger'); return; }
         const incoming = data.data || data;
+        const photoBag = (data && data.__photos && typeof data.__photos === 'object') ? data.__photos : {};
         const mode = (root.querySelector('input[name="imp-mode"]:checked') || {}).value || 'merge';
         const merge = (cur, inc) => {
           if (Array.isArray(cur) && Array.isArray(inc)) {
@@ -1766,15 +1976,35 @@ function importAll() {
           if (cur && typeof cur === 'object' && inc && typeof inc === 'object') return { ...cur, ...inc };
           return inc;
         };
-        const apply = () => {
+        const restorePhotos = async () => {
+          const ids = Object.keys(photoBag);
+          if (!ids.length) return 0;
+          if (mode === 'overwrite') { try { await idb.clear(); } catch {} }
+          let ok = 0;
+          const entries = [];
+          for (const pid of ids) {
+            const blob = dataURLtoBlob(photoBag[pid]);
+            if (blob) entries.push([pid, blob]);
+          }
+          try {
+            await idb.putMany(entries);
+            ok = entries.length;
+          } catch (e) { console.warn('导入照片部分失败', e); }
+          return ok;
+        };
+        const apply = async () => {
           let count = 0;
           Object.keys(Schema).forEach(k => {
             if (incoming[k] === undefined) return;
             Schema[k] = (mode === 'overwrite') ? incoming[k] : merge(Schema[k], incoming[k]);
             count++;
           });
-          saveAll(); closeModal(); renderAll();
-          toast(mode === 'overwrite' ? `已覆盖恢复 ${count} 个数据集` : `已合并 ${count} 个数据集`);
+          saveAll();
+          // 重渲前 revoke 老 objectURL（健身 tab 的）
+          revokeAllPhotoUrls();
+          const restored = await restorePhotos();
+          closeModal(); renderAll();
+          toast(`${mode === 'overwrite' ? '已覆盖' : '已合并'} ${count} 个数据集${restored ? `，照片 ${restored} 张` : ''}`);
         };
         if (mode === 'overwrite') {
           // 覆盖前先自动下载本机快照到下载目录，作为防误操作的兜底
@@ -1802,7 +2032,7 @@ function importAll() {
 
 function clearAll() {
   showModal(`<h3>⚠️ 清空全部数据</h3>
-    <p style="color:var(--danger);font-size:13px">这将删除本机所有工作台数据，且不可恢复。建议先「导出 JSON 备份」。</p>
+    <p style="color:var(--danger);font-size:13px">这将删除本机所有工作台数据，包括 IndexedDB 里的健身照片。建议先「导出 JSON 备份」。</p>
     <div class="form-row"><label>请输入 <code>CLEAR</code> 确认</label><input type="text" id="cl-confirm" placeholder="CLEAR" /></div>
     <div class="actions">
       <button class="btn ghost" data-act="cancel">取消</button>
@@ -1811,17 +2041,20 @@ function clearAll() {
   `, {
     onMount: (root) => {
       root.querySelector('[data-act="cancel"]').onclick = closeModal;
-      root.querySelector('[data-act="save"]').onclick = () => {
+      root.querySelector('[data-act="save"]').onclick = async () => {
         if (root.querySelector('#cl-confirm').value.trim() !== 'CLEAR') { toast('确认词不对', 'warn'); return; }
         // 清空前先下载本机快照兜底（与覆盖导入一致的安全阀）
         const snap = { app: 'xiaotai-workbench-snapshot', version: 1, exportedAt: new Date().toISOString(), note: '清空前的本机数据快照（可重新导入恢复）', data: JSON.parse(JSON.stringify(Schema)) };
         downloadFile(`workbench-清空前快照-${todayStr()}.json`, JSON.stringify(snap, null, 2), 'application/json');
         store.clearAll();
+        try { await idb.clear(); } catch {}
+        revokeAllPhotoUrls();
         Object.assign(Schema, {
           reviews: [], notes: [],
           fitness: [], news: [], newsNotes: '',
           settings: { onboarded: false }
         });
+        localStorage.removeItem('wb_pm_fit_migrated');
         saveAll(); closeModal(); renderAll();
         toast('已清空');
       };
@@ -1899,7 +2132,7 @@ function bindHeaderActions() {
     <button class="btn sm danger" id="btn-clear" title="清空全部数据">${iconTrash()}</button>
   `;
   $('#btn-lock').onclick = () => { if (isLockSet()) lockNow(); else showLock(); };
-  $('#btn-export').onclick = exportAll;
+  $('#btn-export').onclick = () => exportAll();
   $('#btn-import').onclick = importAll;
   $('#btn-data').onclick = showDataSecurity;
   $('#btn-clear').onclick = clearAll;
@@ -2024,7 +2257,42 @@ function bindLockUI() {
 }
 
 // ---------- 启动 ----------
-function init() {
+// 一次性迁移：localStorage 里 fitness.photos[] 残留的 base64 → 搬到 IndexedDB。
+// 完成后 schema.photos 项收缩为 {id}，不再含 data 字段，从根本上避免再次撑爆 localStorage。
+async function migrateFitPhotos() {
+  if (localStorage.getItem('wb_pm_fit_migrated') === '1') return;
+  let movedCount = 0;
+  let touched = false;
+  const tasks = [];
+  Schema.fitness.forEach(f => {
+    if (!Array.isArray(f.photos)) return;
+    const newPhotos = [];
+    f.photos.forEach(p => {
+      if (!p || typeof p !== 'object') return;
+      if (typeof p.data === 'string') {
+        const blob = dataURLtoBlob(p.data);
+        if (blob) {
+          tasks.push(idb.put(p.id, blob).then(() => { movedCount++; }).catch(() => {}));
+        }
+        newPhotos.push({ id: p.id });
+        touched = true;
+      } else if (p.id) {
+        newPhotos.push({ id: p.id });
+      }
+    });
+    if (touched) f.photos = newPhotos;
+  });
+  if (tasks.length) await Promise.all(tasks);
+  if (touched) {
+    try { save('fitness'); } catch (e) { console.warn('迁移后保存失败', e); }
+    // 触发一次 store.set 内的 quota 兜底：未来再写会因瘦身后不再超限而顺利成功
+    toast(`已迁移 ${movedCount} 张照片到本地大容量存储`, 'ok', 2500);
+  }
+  localStorage.setItem('wb_pm_fit_migrated', '1');
+  console.log('[migrateFitPhotos]', { moved: movedCount, touched });
+}
+
+async function init() {
   loadAll();
   // 仅“首次运行（本地存储完全没有任何 wb_pm_ 数据）”才预置示例，
   // 避免“复盘为空 / 未 onboarded”就误把用户真实数据重置成示例数据
@@ -2038,6 +2306,15 @@ function init() {
   currentTab = 'today';
   $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-today'));
   renderTabs();
+
+  // 老照片迁移：在所有渲染之后异步进行，不阻塞首屏
+  if (Schema.fitness && Schema.fitness.length) {
+    Promise.resolve().then(() => migrateFitPhotos().catch(e => console.warn('migrate failed', e))).then(() => {
+      // 迁移后再渲染一次，确保 src 已经走 IDB
+      const fitnessTabActive = $('#view-fitness')?.classList.contains('active');
+      if (fitnessTabActive) renderFitness();
+    });
+  }
 
   if (isLockSet()) showLock(); else hideLock();
 
